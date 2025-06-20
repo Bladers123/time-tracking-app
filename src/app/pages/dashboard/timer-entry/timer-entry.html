@@ -1,0 +1,27 @@
+<div class="timer-entry">
+  <div class="timer-entry__controls">
+    <button (click)="startStopTimer()">
+      {{ isRunning ? 'Stopp' : 'Start' }}
+    </button>
+    <button (click)="resetTimer()" [disabled]="!startTime || isRunning">
+      Zurücksetzen
+    </button>
+  </div>
+
+  <div class="timer-entry__display" *ngIf="startTime">
+    <div>
+      Start: 
+      <span *ngIf="endTime">— Ende:</span>
+    </div>
+  </div>
+
+  <div class="timer-entry__list" *ngIf="entries.length > 0">
+    <h3>Erfasste Zeitspannen</h3>
+    <ul>
+      <li *ngFor="let entry of entries">
+        <strong>{{ entry.date }}</strong>:
+        {{ entry.start }} — {{ entry.end }}
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #22223b;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 0 0 1.2rem 1.2rem;
+  box-shadow: 0 2px 12px rgba(34,34,59,0.1);
+
+  &__brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  &__links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    li {
+      a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        padding-bottom: 4px;
+        transition: border-bottom 0.2s;
+        &:hover, &.active {
+          border-bottom: 2px solid #9a8c98;
+        }
+      }
+    }
+  }
+}
