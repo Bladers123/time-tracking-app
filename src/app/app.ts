@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TimerEntryComponent } from "./pages/dashboard/timer-entry/timer-entry";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TimerEntryComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

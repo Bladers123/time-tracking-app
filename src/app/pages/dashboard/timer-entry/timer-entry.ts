@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { TimerEntry } from '../../../shared/interfaces/timer-entry.interface';
 import { CommonModule } from '@angular/common';
-
+import { TimerEntry } from '../../../shared/interfaces/timer-entry.interface';
+import { Component, OnInit } from '@angular/core';
+import { TimerService } from '../../../shared/services/timer.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -14,37 +15,9 @@ import { CommonModule } from '@angular/common';
 
 
 export class TimerEntryComponent {
-  isRunning = false;
-  startTime: Date | null = null;
-  endTime: Date | null = null;
-  entries: TimerEntry[] = []; // <-- Richtiger Typ
+ entries$: Observable<TimerEntry[]>;
 
-  startStopTimer() {
-    if (!this.isRunning) {
-      this.startTime = new Date();
-      this.endTime = null;
-      this.isRunning = true;
-    } else {
-      this.endTime = new Date();
-      this.isRunning = false;
-      if (this.startTime && this.endTime) {
-        this.addEntry(this.startTime, this.endTime);
-      }
-    }
-  }
-
-  resetTimer() {
-    this.startTime = null;
-    this.endTime = null;
-    this.isRunning = false;
-  }
-
-  addEntry(start: Date, end: Date) {
-    this.entries.unshift({
-      date: start.toLocaleDateString(),
-      start: start.toLocaleTimeString(),
-      end: end.toLocaleTimeString()
-    });
-    this.resetTimer();
+  constructor(private timerService: TimerService) {
+    this.entries$ = this.timerService.entries$;
   }
 }

@@ -1,27 +1,17 @@
-<div class="timer-entry">
-  <div class="timer-entry__controls">
-    <button (click)="startStopTimer()">
-      {{ isRunning ? 'Stopp' : 'Start' }}
-    </button>
-    <button (click)="resetTimer()" [disabled]="!startTime || isRunning">
-      Zurücksetzen
-    </button>
-  </div>
-
-  <div class="timer-entry__display" *ngIf="startTime">
-    <div>
-      Start: 
-      <span *ngIf="endTime">— Ende:</span>
-    </div>
-  </div>
-
-  <div class="timer-entry__list" *ngIf="entries.length > 0">
+<div class="timer-card__entries" *ngIf="entries$ | async as entries">
+  <ng-container *ngIf="entries.length > 0; else noEntries">
     <h3>Erfasste Zeitspannen</h3>
     <ul>
       <li *ngFor="let entry of entries">
+        <span class="material-symbols-outlined">event</span>
         <strong>{{ entry.date }}</strong>:
-        {{ entry.start }} — {{ entry.end }}
+        <span class="material-symbols-outlined">play_arrow</span> {{ entry.start }}
+        &nbsp;
+        <span class="material-symbols-outlined">stop</span> {{ entry.end }}
       </li>
     </ul>
-  </div>
+  </ng-container>
+  <ng-template #noEntries>
+    <p style="color: #bbb; font-style: italic; margin-top: 1rem;">Noch keine Einträge erfasst.</p>
+  </ng-template>
 </div>

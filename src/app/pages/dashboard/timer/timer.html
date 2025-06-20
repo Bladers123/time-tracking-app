@@ -1,0 +1,19 @@
+<div class="timer-card">
+  <div class="timer-card__timer">
+    <span class="material-symbols-outlined timer-card__icon">schedule</span>
+    <span class="timer-card__time">
+      {{ timerService.formatDuration((duration$ | async) ?? 0) }}
+    </span>
+  </div>
+  
+  <div class="timer-card__controls">
+    <button 
+      class="timer-btn timer-btn--main" 
+      (click)="toggleTimer()">
+      <span class="material-symbols-outlined">
+        {{ (isRunning$ | async) ? 'stop_circle' : 'play_circle' }}
+      </span>
+      {{ (isRunning$ | async) ? 'Stopp' : 'Start' }}
+    </button>
+  </div>
+</div>
