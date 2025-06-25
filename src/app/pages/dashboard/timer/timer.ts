@@ -16,7 +16,7 @@ export class TimerComponent {
 
   constructor(public timerService: TimerService) {
     this.isRunning$ = timerService.isRunning$;
-    this.duration$ = this.timerService.duration$;
+    this.duration$ = timerService.duration$;
   }
 
   toggleTimer() {
