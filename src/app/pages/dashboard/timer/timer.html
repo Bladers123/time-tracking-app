@@ -1,18 +1,147 @@
-<div class="timer-root">
-
-  <div class="timer-card">
-    <div class="timer-header">
-      <img class="timer-icon" src="img/timer.png"/>
-      <span class="timer-time">
-        {{ timerService.formatDuration((duration$ | async) ?? 0) }}
-      </span>
+<div class="timer-container">
+  <!-- Project Selection -->
+  <div class="project-selection" *ngIf="!isTimerRunning">
+    <h3>Projekt auswählen</h3>
+    <div class="project-dropdown">
+      <select 
+        [(ngModel)]="selectedProjectId" 
+        (change)="onProjectChange()"
+        class="project-select">
+        <option value="">-- Projekt auswählen --</option>
+        <option 
+          *ngFor="let project of availableProjects" 
+          [value]="project.id"
+          [disabled]="project.status !== 'active'">
+          {{ project.name }} 
+          <span *ngIf="project.status !== 'active'">({{ project.status }})</span>
+        </option>
+      </select>
+    </div>
+    
+    <!-- Task Description -->
+    <div class="task-input" *ngIf="selectedProject">
+      <label for="taskDescription">Aufgabenbeschreibung (optional)</label>
+      <input 
+        id="taskDescription"
+        type="text" 
+        [(ngModel)]="taskDescription" 
+        placeholder="Was arbeiten Sie gerade?"
+        class="task-input-field"
+        maxlength="200">
     </div>
 
-    <button class="timer-btn" [ngClass]="(isRunning$ | async) ? 'timer-btn--stop' : 'timer-btn--start'"
-      (click)="toggleTimer()">
-      <img [src]="(isRunning$ | async) ? 'img/stop.png' : 'img/play.png'" alt="Play/Stop" class="timer-btn-icon" />
-      {{ (isRunning$ | async) ? 'Stopp' : 'Start' }}
+    <!-- Start Button -->
+    <button 
+      class="start-btn"
+      [disabled]="!selectedProject"
+      (click)="startTimer()"
+      [class.disabled]="!selectedProject">
+      <i class="icon icon-play"></i>
+      Timer starten
     </button>
+    
+    <p class="selection-hint" *ngIf="!selectedProject">
+      Bitte wählen Sie ein aktives Projekt aus, um den Timer zu starten.
+    </p>
+  </div>
 
+  <!-- Running Timer -->
+  <div class="timer-display" *ngIf="isTimerRunning">
+    <div class="timer-header">
+      <div class="project-info">
+        <h3>{{ selectedProject?.name }}</h3>
+        <span class="project-status">{{ selectedProject?.status }}</span>
+      </div>
+      <div class="timer-status">
+        <span class="status-indicator"></span>
+        Läuft seit {{ startTime | date:'HH:mm' }}
+      </div>
+    </div>
+
+    <div class="timer-clock">
+      <span class="time-display">{{ currentDuration }}</span>
+      <span class="time-label">Stunden:Minuten:Sekunden</span>
+    </div>
+
+    <div class="task-display" *ngIf="taskDescription">
+      <p><strong>Aufgabe:</strong> {{ taskDescription }}</p>
+    </div>
+
+    <div class="timer-actions">
+      <button class="stop-btn" (click)="stopTimer()">
+        <i class="icon icon-stop"></i>
+        Timer stoppen
+      </button>
+      
+      <button class="pause-btn" (click)="pauseTimer()" *ngIf="!isPaused">
+        <i class="icon icon-pause"></i>
+        Pausieren
+      </button>
+      
+      <button class="resume-btn" (click)="resumeTimer()" *ngIf="isPaused">
+        <i class="icon icon-play"></i>
+        Fortsetzen
+      </button>
+    </div>
+
+    <!-- Pause Indicator -->
+    <div class="pause-indicator" *ngIf="isPaused">
+      <i class="icon icon-pause-circle"></i>
+      Timer pausiert seit {{ pauseStartTime | date:'HH:mm' }}
+    </div>
+  </div>
+
+  <!-- Timer Summary (after stopping) -->
+  <div class="timer-summary" *ngIf="lastSession && !isTimerRunning">
+    <h3>Letzte Sitzung beendet</h3>
+    <div class="summary-details">
+      <div class="summary-item">
+        <span class="label">Projekt:</span>
+        <span class="value">{{ lastSession.projectName }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Dauer:</span>
+        <span class="value">{{ lastSession.duration }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Von:</span>
+        <span class="value">{{ lastSession.startTime | date:'HH:mm' }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Bis:</span>
+        <span class="value">{{ lastSession.endTime | date:'HH:mm' }}</span>
+      </div>
+      <div class="summary-item" *ngIf="lastSession.taskDescription">
+        <span class="label">Aufgabe:</span>
+        <span class="value">{{ lastSession.taskDescription }}</span>
+      </div>
+    </div>
+    
+    <div class="summary-actions">
+      <button class="new-session-btn" (click)="startNewSession()">
+        <i class="icon icon-plus"></i>
+        Neue Sitzung starten
+      </button>
+      <button class="edit-session-btn" (click)="editLastSession()">
+        <i class="icon icon-edit"></i>
+        Bearbeiten
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats" *ngIf="!isTimerRunning && !lastSession">
+    <h4>Heute</h4>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-value">{{ todayStats.totalHours }}h {{ todayStats.totalMinutes }}m</span>
+        <span class="stat-label">Gesamtzeit</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">{{ todayStats.sessionsCount }}</span>
+        <span class="stat-label">Sitzungen</span>
+      </div>
+    </div>
   </div>
 </div>
+

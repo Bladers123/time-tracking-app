@@ -1,4 +1,150 @@
-<div>
-     <app-timer></app-timer>
-     <app-timer-entry></app-timer-entry>
+<app-navbar></app-navbar>
+
+
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <h1>Willkommen zurück, {{ userName }}!</h1>
+    <p class="date">{{ currentDate | date:'fullDate':'de' }}</p>
+  </div>
+
+  <!-- Timer Component -->
+  <app-timer></app-timer>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="action-btn secondary" (click)="addManualEntry()">
+      <i class="icon icon-plus"></i>
+      Manueller Eintrag
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon today"></div>
+      <div class="stat-content">
+        <h3>Heute</h3>
+        <p class="stat-value">{{ todayHours }}h {{ todayMinutes }}m</p>
+        <span class="stat-label">Gearbeitete Zeit</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon week"></div>
+      <div class="stat-content">
+        <h3>Diese Woche</h3>
+        <p class="stat-value">{{ weekHours }}h {{ weekMinutes }}m</p>
+        <span class="stat-label">von {{ targetWeeklyHours }}h Ziel</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon month"></div>
+      <div class="stat-content">
+        <h3>Dieser Monat</h3>
+        <p class="stat-value">{{ monthHours }}h</p>
+        <span class="stat-label">Gesamtzeit</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon projects"></div>
+      <div class="stat-content">
+        <h3>Aktive Projekte</h3>
+        <p class="stat-value">{{ activeProjectsCount }}</p>
+        <span class="stat-label">Projekte</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="recent-activities">
+    <div class="section-header">
+      <h2>Letzte Aktivitäten</h2>
+      <button class="view-all-btn" (click)="viewAllActivities()">Alle anzeigen</button>
+    </div>
+    <div class="activities-list">
+      <div class="activity-item" *ngFor="let activity of recentActivities; trackBy: trackByActivityId">
+        <div class="activity-time">
+          <span class="time">{{ activity.startTime | date:'HH:mm' }}</span>
+          <span class="duration">{{ activity.duration }}</span>
+        </div>
+        <div class="activity-content">
+          <h4>{{ activity.projectName }}</h4>
+          <p>{{ activity.description }}</p>
+        </div>
+        <div class="activity-actions">
+          <button class="action-icon" (click)="editActivity(activity)" title="Bearbeiten">
+            <i class="icon icon-edit"></i>
+          </button>
+          <button class="action-icon" (click)="deleteActivity(activity)" title="Löschen">
+            <i class="icon icon-delete"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Overview -->
+  <div class="projects-overview">
+    <div class="section-header">
+      <h2>Projekte Übersicht</h2>
+      <button class="view-all-btn" (click)="viewAllProjects()">Alle Projekte</button>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card" *ngFor="let project of topProjects; trackBy: trackByProjectId">
+        <div class="project-header">
+          <h3>{{ project.name }}</h3>
+          <span class="project-status" [ngClass]="project.status">{{ project.status }}</span>
+        </div>
+        <div class="project-stats">
+          <div class="stat">
+            <span class="label">Diese Woche:</span>
+            <span class="value">{{ project.weeklyHours }}h</span>
+          </div>
+          <div class="stat">
+            <span class="label">Gesamt:</span>
+            <span class="value">{{ project.totalHours }}h</span>
+          </div>
+        </div>
+        <div class="project-progress" *ngIf="project.budget">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="project.progressPercentage"></div>
+          </div>
+          <span class="progress-text">{{ project.progressPercentage }}% von {{ project.budget }}h</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Chart -->
+  <div class="weekly-chart">
+    <div class="section-header">
+      <h2>Wöchentliche Übersicht</h2>
+      <div class="chart-controls">
+        <button class="chart-btn" [class.active]="chartView === 'hours'" (click)="setChartView('hours')">Stunden</button>
+        <button class="chart-btn" [class.active]="chartView === 'projects'" (click)="setChartView('projects')">Projekte</button>
+      </div>
+    </div>
+    <div class="chart-container">
+      <!-- Hier würde normalerweise ein Chart-Component eingefügt werden -->
+      <div class="chart-placeholder">
+        <p>Wöchentliches Diagramm wird hier angezeigt</p>
+        <small>Integration mit Chart.js oder ähnlicher Bibliothek erforderlich</small>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+
+
+
+
+
+
+
+     <!-- <app-timer></app-timer>
+     <app-timer-entry></app-timer-entry> -->
+     <app-footer></app-footer>

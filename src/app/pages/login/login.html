@@ -1,0 +1,121 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+          <path d="M14 20l6 6 12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Willkommen zurück</h1>
+      <p class="login-subtitle">Melden Sie sich in Ihrem Konto an</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="email" class="form-label">E-Mail-Adresse</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.33333 3.33334H16.6667C17.5833 3.33334 18.3333 4.08334 18.3333 5.00001V15C18.3333 15.9167 17.5833 16.6667 16.6667 16.6667H3.33333C2.41667 16.6667 1.66667 15.9167 1.66667 15V5.00001C1.66667 4.08334 2.41667 3.33334 3.33333 3.33334Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.3333 5L10 10.8333L1.66667 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input"
+            placeholder="ihre.email@beispiel.de"
+            [(ngModel)]="email"
+            required
+            #emailInput="ngModel"
+            [class.error]="emailInput.invalid && emailInput.touched"
+          >
+        </div>
+        <div class="error-message" *ngIf="emailInput.invalid && emailInput.touched">
+          <span *ngIf="emailInput.errors?.['required']">E-Mail-Adresse ist erforderlich</span>
+          <span *ngIf="emailInput.errors?.['email']">Bitte geben Sie eine gültige E-Mail-Adresse ein</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Passwort</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.33333" y="9.16666" width="13.3333" height="7.5" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6.66667 9.16666V6.66666C6.66667 4.82572 8.15905 3.33333 10 3.33333C11.8409 3.33333 13.3333 4.82572 13.3333 6.66666V9.16666" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            id="password" 
+            name="password" 
+            class="form-input"
+            placeholder="Ihr Passwort"
+            [(ngModel)]="password"
+            required
+            minlength="6"
+            #passwordInput="ngModel"
+            [class.error]="passwordInput.invalid && passwordInput.touched"
+          >
+          <button 
+            type="button" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            aria-label="Passwort anzeigen/verbergen"
+          >
+            <svg *ngIf="!showPassword" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.66667 10S4.16667 5 10 5s8.33333 5 8.33333 5-2.5 5-8.33333 5S1.66667 10 1.66667 10z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <svg *ngIf="showPassword" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.95 14.95L9.16667 9.16667M9.16667 9.16667L5.05 5.05M9.16667 9.16667V13.3333M9.16667 9.16667H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M1.66667 10S4.16667 5 10 5c1.25 0 2.36667 0.3 3.35 0.8M18.3333 10s-1.1 2.2-3.3333 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M2.5 2.5l15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="passwordInput.invalid && passwordInput.touched">
+          <span *ngIf="passwordInput.errors?.['required']">Passwort ist erforderlich</span>
+          <span *ngIf="passwordInput.errors?.['minlength']">Passwort muss mindestens 6 Zeichen lang sein</span>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Angemeldet bleiben</span>
+        </label>
+        <a href="#" class="forgot-password" (click)="onForgotPassword(); $event.preventDefault()">Passwort vergessen?</a>
+      </div>
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="loginForm.invalid || isLoading"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">Anmelden</span>
+        <div *ngIf="isLoading" class="loading-spinner"></div>
+      </button>
+
+      <div class="divider">
+        <span>oder</span>
+      </div>
+
+      <button type="button" class="google-button" (click)="onGoogleLogin()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.1713 8.36788H17.5001V8.33329H10.0001V11.6666H14.7096C14.023 13.6069 12.1763 15 10.0001 15C7.23884 15 5.00009 12.7612 5.00009 9.99996C5.00009 7.23871 7.23884 4.99996 10.0001 4.99996C11.2746 4.99996 12.4342 5.48079 13.3171 6.26621L15.6742 3.90913C14.1859 2.52204 12.1951 1.66663 10.0001 1.66663C5.39801 1.66663 1.66676 5.39788 1.66676 9.99996C1.66676 14.602 5.39801 18.3333 10.0001 18.3333C14.6022 18.3333 18.3334 14.602 18.3334 9.99996C18.3334 9.44121 18.2759 8.89579 18.1713 8.36788Z" fill="#FFC107"/>
+          <path d="M2.62744 6.12121L5.36536 8.12913C6.10619 6.29496 7.90036 4.99996 9.99994 4.99996C11.2744 4.99996 12.434 5.48079 13.3169 6.26621L15.674 3.90913C14.1857 2.52204 12.1949 1.66663 9.99994 1.66663C6.79911 1.66663 4.02327 3.47371 2.62744 6.12121Z" fill="#FF3D00"/>
+          <path d="M10.0001 18.3333C12.1584 18.3333 14.1167 17.5095 15.5876 16.17L13.0084 13.9875C12.1417 14.6458 11.0751 15.0008 10.0001 15C7.82594 15 5.98094 13.6091 5.29177 11.6716L2.58344 13.7583C3.96094 16.4816 6.7701 18.3333 10.0001 18.3333Z" fill="#4CAF50"/>
+          <path d="M18.1713 8.36796H17.5V8.33337H10V11.6667H14.7096C14.3809 12.5902 13.7889 13.3972 13.0067 13.9879L13.0084 13.9871L15.5876 16.1696C15.4042 16.3363 18.3333 14.1667 18.3333 10C18.3333 9.44129 18.2758 8.89587 18.1713 8.36796Z" fill="#1976D2"/>
+        </svg>
+        Mit Google anmelden
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Noch kein Konto? <a href="#" class="signup-link" (click)="onSignUp(); $event.preventDefault()">Jetzt registrieren</a></p>
+    </div>
+  </div>
+</div>
+
