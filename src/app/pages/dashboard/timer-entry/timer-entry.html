@@ -1,17 +1,34 @@
 <div class="timer-card__entries" *ngIf="entries$ | async as entries">
   <ng-container *ngIf="entries.length > 0; else noEntries">
     <h3>Erfasste Zeitspannen</h3>
-    <ul>
-      <li *ngFor="let entry of entries">
-        <span class="material-symbols-outlined">event</span>
-        <strong>{{ entry.date }}</strong>:
-        <span class="material-symbols-outlined">play_arrow</span> {{ entry.start }}
-        &nbsp;
-        <span class="material-symbols-outlined">stop</span> {{ entry.end }}
-      </li>
-    </ul>
+    <div class="entries-table">
+      <div class="entries-header">
+        <div class="entries-cell">Erfasst am</div>
+        <div class="entries-cell">Von</div>
+        <div class="entries-cell">Bis</div>
+      </div>
+
+      <div class="entries-row" *ngFor="let entry of entries">
+
+        <div class="entries-cell entries-date">
+          <i class="pi pi-calendar icon-date"></i>
+          <span>{{ entry.date }}</span>
+        </div>
+
+        <div class="entries-cell entries-time">
+          <i class="pi pi-play icon-play"></i>
+          <span class="entry-time">{{ entry.start }}</span>
+        </div>
+
+        <div class="entries-cell entries-time">
+          <i class="pi pi-stop icon-stop"></i>
+          <span class="entry-time">{{ entry.end }}</span>
+        </div>
+
+      </div>
+    </div>
   </ng-container>
   <ng-template #noEntries>
-    <p style="color: #bbb; font-style: italic; margin-top: 1rem;">Noch keine Einträge erfasst.</p>
+    <p class="timer-card__no-entries">Noch keine Einträge erfasst.</p>
   </ng-template>
 </div>

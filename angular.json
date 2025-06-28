@@ -30,6 +30,7 @@
               }
             ],
             "styles": [
+              "primeicons/primeicons.css",
               "primeflex/themes/primeone-dark.css",   
               "node_modules/primeflex/primeflex.css",
               "src/styles.scss"
