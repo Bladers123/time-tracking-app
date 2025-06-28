@@ -1,102 +1,85 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Material+Symbols+Outlined');
+.timer-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+// card
 .timer-card {
-  max-width: 360px;
-  margin: 3rem auto 0 auto;
-  background: #fff;
-  border-radius: 1.6rem;
-  box-shadow: 0 8px 32px 0 rgba(40, 40, 90, 0.17);
-  padding: 2.5rem 1.6rem 2.1rem 1.6rem;
+  background: rgb(160 206 228 / 93%);
+  border-radius: 2rem;
+  padding: 2.7rem 2rem 2.3rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
-  transition: box-shadow 0.18s;
+
+  transition: box-shadow 0.18s, transform 0.16s;
+  backdrop-filter: blur(6px);
+  margin: 0 auto;
+}
+
+// timer container
+.timer-header {
+  background-color: white;
+  padding: 1.1rem 2.1rem;
+  border-radius: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.2rem;
+}
+
+// timer icon
+.timer-icon {
+  font-size: 2.4rem;
+  color: #9a8c98;
+  margin-right: 1rem;
+  opacity: 0.83;
+  filter: drop-shadow(0 1px 1px #fff);
+}
+
+// timer time
+.timer-time {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #22223b;
+  text-shadow: 0 2px 8px #f6f2ff;
+  font-variant-numeric: tabular-nums;
+}
+
+// timer button
+.timer-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.23rem;
+  font-weight: 600;
+  padding: 1.1rem 2.1rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.13s;
 
   &:hover {
-    box-shadow: 0 16px 40px 0 rgba(34,34,59,0.18);
-  }
-
-  &__timer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(95deg, #f6f2ff 65%, #e9ecef 100%);
-    border-radius: 1.2rem;
-    font-size: 2.7rem;
-    color: #4a4e69;
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    min-width: 210px;
-    min-height: 80px;
-    letter-spacing: 1.7px;
-    margin-bottom: 2.1rem;
-    box-shadow: 0 4px 18px 0 rgba(120, 80, 200, 0.07);
-    border: 1.5px solid #ede9f8;
-
-    .timer-card__icon {
-      font-size: 2.4rem;
-      color: #9a8c98;
-      margin-right: 0.7rem;
-      opacity: 0.85;
-      filter: drop-shadow(0 1px 1px #fff);
-    }
-
-    .timer-card__time {
-      font-size: 2.6rem;
-      font-weight: 700;
-      letter-spacing: 1.4px;
-      color: #22223b;
-      text-shadow: 0 2px 8px #f6f2ff;
-      padding-left: 0.1em;
-    }
-  }
-
-  &__controls {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-
-    .timer-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      padding: 1.08rem 2.2rem;
-      border: none;
-      border-radius: 0.8rem;
-      box-shadow: 0 2px 12px rgba(70, 50, 110, 0.08);
-      cursor: pointer;
-      background: linear-gradient(90deg, #4a4e69 78%, #9a8c98 120%);
-      color: #fff;
-      transition: 
-        background 0.18s,
-        transform 0.11s,
-        box-shadow 0.13s;
-
-      .material-symbols-outlined {
-        font-size: 1.7rem;
-        margin-right: 0.18em;
-      }
-
-      &:hover:not(:disabled) {
-        background: linear-gradient(90deg, #c9184a 80%, #4a4e69 120%);
-        transform: translateY(-2px) scale(1.045);
-        box-shadow: 0 8px 32px 0 rgba(200, 40, 80, 0.13);
-      }
-
-      &:active:not(:disabled) {
-        transform: scale(0.97);
-      }
-
-      &:disabled {
-        background: #dedede;
-        color: #bbb;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-    }
+    transform: scale(1.10);
   }
 }
 
+// time button icon
+.timer-btn-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 0.5em;
+}
+
+// if timer stoped
+.timer-btn--start {
+  background: linear-gradient(90deg, #4a4e69 80%, #9a8c98 120%);
+}
+
+// if timer started
+.timer-btn--stop {
+  background: linear-gradient(90deg, #c9184a 83%, #4a4e69 120%);
+}
