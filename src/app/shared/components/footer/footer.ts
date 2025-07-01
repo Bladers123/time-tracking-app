@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
+import { Router } from '@angular/router';
 
 interface SocialLink {
   name: string;
@@ -14,6 +15,8 @@ interface SocialLink {
   templateUrl: './footer.html',
   styleUrls: ['./footer.scss']
 })
+
+
 export class FooterComponent implements OnInit, OnDestroy {
   // Firmen-/App-Informationen
   companyName = 'Zeiterfassung Pro';
@@ -63,7 +66,9 @@ export class FooterComponent implements OnInit, OnDestroy {
   private statsSubscription?: Subscription;
   private serverStatusSubscription?: Subscription;
 
-  constructor() {}
+  defaultProjectId: string = '1'; // Standard-Projekt-ID für den Projekte-Link
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.checkMobileView();
@@ -75,6 +80,16 @@ export class FooterComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.statsSubscription?.unsubscribe();
     this.serverStatusSubscription?.unsubscribe();
+  }
+
+  // Navigation
+  openProjectModal(): void {
+    // Hier würde das Projekt-Modal geöffnet oder zur Projektliste navigiert
+    this.router.navigate(['/projects']);
+  }
+
+  navigateToProject(): void {
+    this.router.navigate(['/project', this.defaultProjectId]);
   }
 
   // Initialisierung
@@ -110,7 +125,7 @@ export class FooterComponent implements OnInit, OnDestroy {
     // Beispiel-Implementierung
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     // Simuliere Daten basierend auf LocalStorage oder Service
     const timerState = localStorage.getItem('timerState');
     if (timerState) {

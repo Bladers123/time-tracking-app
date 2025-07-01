@@ -13,18 +13,23 @@
                 Dashboard
             </a>
 
-            <a routerLink="/timetracking" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
-                <i class="icon-clock"></i>
-                Zeiterfassung
-            </a>
-
-            <a routerLink="/projects" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+            <a (click)="toggleProjectModal(); $event.stopPropagation()" class="nav-link">
                 <i class="icon-folder"></i>
                 Projekte
             </a>
 
+            <a routerLink="/entries" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+                <i class="icon-list"></i>
+                Zeiten
+            </a>
+
+            <a routerLink="/tasks" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+                <i class="icon-check-square"></i>
+                Aufgaben
+            </a>
+
             <a routerLink="/reports" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
-                <i class="icon-chart"></i>
+                <i class="icon-file-text"></i>
                 Berichte
             </a>
         </div>
@@ -79,4 +84,80 @@
 
     <!-- Mobile Overlay -->
     <div class="mobile-overlay" *ngIf="isMenuOpen" (click)="closeMenu()"></div>
+
+    <!-- Projekt-Auswahl Modal -->
+    <div class="project-modal-overlay" *ngIf="isProjectModalOpen" (click)="closeProjectModal()">
+        <div class="project-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title">Projekte auswählen</h3>
+                <button class="modal-close" (click)="closeProjectModal()" aria-label="Schließen">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+
+            <div class="modal-content">
+                <div class="projects-grid">
+                    <div *ngFor="let project of availableProjects; trackBy: trackByProjectId" class="project-card"
+                        (click)="selectProject(project)" [class.active]="project.status === 'active'"
+                        [class.paused]="project.status === 'paused'" [class.completed]="project.status === 'completed'">
+
+                        <div class="project-header">
+                            <h4 class="project-name">{{ project.name }}</h4>
+                            <div class="project-status" [style.background-color]="getStatusColor(project.status)">
+                                {{ getStatusText(project.status) }}
+                            </div>
+                        </div>
+
+                        <div class="project-details">
+                            <div class="project-client" *ngIf="project.client">
+                                <i class="icon-building"></i>
+                                {{ project.client }}
+                            </div>
+
+                            <div class="project-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" [style.width.%]="project.progressPercentage"></div>
+                                </div>
+                                <span class="progress-text">{{ project.progressPercentage }}%</span>
+                            </div>
+
+                            <div class="project-stats">
+                                <div class="stat">
+                                    <i class="icon-clock"></i>
+                                    <span>{{ project.totalHours }}h</span>
+                                </div>
+                                <div class="stat" *ngIf="project.budget">
+                                    <i class="icon-euro"></i>
+                                    <span>{{ project.budget }}h Budget</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-actions">
+                            <button class="action-btn primary"
+                                (click)="navigateToProject(project.id); $event.stopPropagation()">
+                                <i class="icon-eye"></i>
+                                Details
+                            </button>
+                            <button class="action-btn secondary"
+                                (click)="startTimer(project); $event.stopPropagation()">
+                                <i class="icon-play"></i>
+                                Timer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-secondary" (click)="closeProjectModal()">
+                        Schließen
+                    </button>
+                    <button class="btn-primary" (click)="createNewProject()">
+                        <i class="icon-plus"></i>
+                        Neues Projekt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </nav>

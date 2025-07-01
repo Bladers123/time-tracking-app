@@ -28,9 +28,9 @@
         <h4 class="footer-title">Navigation</h4>
         <ul class="footer-links">
           <li><a routerLink="/dashboard" class="footer-link">Dashboard</a></li>
-          <li><a routerLink="/timetracking" class="footer-link">Zeiterfassung</a></li>
-          <li><a routerLink="/projects" class="footer-link">Projekte</a></li>
-          <li><a routerLink="/reports" class="footer-link">Berichte</a></li>
+          <li><a (click)="openProjectModal()" class="footer-link">Projekte</a></li>
+          <li><a routerLink="/timer" class="footer-link">Timer</a></li>
+          <li><a routerLink="/analytics" class="footer-link">Analytics</a></li>
         </ul>
       </div>
 
