@@ -1,0 +1,189 @@
+<div class="zeiten-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Zeiterfassung</h1>
+      <p class="page-subtitle">Verwalten Sie Ihre Arbeitszeiten und verfolgen Sie Ihre Produktivität</p>
+    </div>
+  </div>
+
+  <!-- Current Timer Section -->
+  <div class="timer-section" [class.active]="isTimerRunning">
+    <div class="timer-card">
+      <div class="timer-header">
+        <h2 class="timer-title">
+          <i class="icon-timer"></i>
+          {{ isTimerRunning ? 'Aktiver Timer' : 'Timer starten' }}
+        </h2>
+        <div class="timer-display" *ngIf="isTimerRunning">
+          {{ currentSessionTime }}
+        </div>
+      </div>
+
+      <div class="timer-content" *ngIf="currentTimer && isTimerRunning">
+        <div class="current-task">
+          <div class="task-project">{{ currentTimer.projectName }}</div>
+          <div class="task-description">{{ currentTimer.taskDescription }}</div>
+        </div>
+      </div>
+
+      <div class="timer-actions">
+        <button class="btn-timer start" *ngIf="!isTimerRunning" (click)="startTimer()">
+          <i class="icon-play"></i>
+          Timer starten
+        </button>
+        <button class="btn-timer stop" *ngIf="isTimerRunning" (click)="stopTimer()">
+          <i class="icon-stop"></i>
+          Timer stoppen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <i class="icon-today"></i>
+          <span class="stat-label">Heute</span>
+        </div>
+        <div class="stat-value">{{ formatDuration(timeStats.todayTotal) }}</div>
+        <div class="stat-detail">{{ formatDuration(timeStats.billableToday) }} abrechenbar</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <i class="icon-week"></i>
+          <span class="stat-label">Diese Woche</span>
+        </div>
+        <div class="stat-value">{{ formatDuration(timeStats.weekTotal) }}</div>
+        <div class="stat-detail">{{ formatDuration(timeStats.billableWeek) }} abrechenbar</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <i class="icon-month"></i>
+          <span class="stat-label">Dieser Monat</span>
+        </div>
+        <div class="stat-value">{{ formatDuration(timeStats.monthTotal) }}</div>
+        <div class="stat-detail">{{ formatDuration(timeStats.billableMonth) }} abrechenbar</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <i class="icon-chart"></i>
+          <span class="stat-label">Effizienz</span>
+        </div>
+        <div class="stat-value">
+          {{ roundPercent(timeStats.billableToday, timeStats.todayTotal) }}%
+        </div>
+        <div class="stat-detail">Abrechenbare Zeit heute</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-card">
+      <div class="filter-group">
+        <label class="filter-label">Projekt:</label>
+        <select class="filter-select" [(ngModel)]="selectedProject" (change)="applyFilters()">
+          <option value="all">Alle Projekte</option>
+          <option *ngFor="let project of availableProjects" [value]="project.id">
+            {{ project.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Zeitraum:</label>
+        <select class="filter-select" [(ngModel)]="selectedDateRange" (change)="applyFilters()">
+          <option value="today">Heute</option>
+          <option value="week">Diese Woche</option>
+          <option value="month">Dieser Monat</option>
+          <option value="all">Alle</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-checkbox">
+          <input type="checkbox" [(ngModel)]="showOnlyBillable" (change)="applyFilters()">
+          <span class="checkbox-label">Nur abrechenbare Zeiten</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Entries Section -->
+  <div class="entries-section">
+    <div class="entries-header">
+      <h2 class="entries-title">Zeiteinträge</h2>
+      <div class="entries-count">{{ filteredEntries.length }} Einträge</div>
+    </div>
+
+    <div class="entries-list" *ngIf="filteredEntries.length > 0">
+      <div *ngFor="let entry of filteredEntries; trackBy: trackByEntryId" class="entry-card">
+        <div class="entry-header">
+          <div class="entry-project" (click)="navigateToProject(entry.projectId)">
+            {{ entry.projectName }}
+          </div>
+          <div class="entry-date">
+            {{ entry.date | date:'dd.MM.yyyy' }}
+          </div>
+        </div>
+
+        <div class="entry-content">
+          <div class="entry-task">{{ entry.taskDescription }}</div>
+          <div class="entry-tags" *ngIf="entry.tags && entry.tags.length > 0">
+            <span *ngFor="let tag of entry.tags" class="tag">{{ tag }}</span>
+          </div>
+        </div>
+
+        <div class="entry-details">
+          <div class="entry-time">
+            <div class="time-range">
+              {{ entry.startTime | date:'HH:mm' }} -
+              {{ entry.endTime ? (entry.endTime | date:'HH:mm') : 'Läuft...' }}
+            </div>
+            <div class="duration">{{ formatDuration(entry.duration) }}</div>
+          </div>
+
+          <div class="entry-status">
+            <div class="billable-status" [class.billable]="entry.billable">
+              <i class="icon-euro" *ngIf="entry.billable"></i>
+              <i class="icon-clock" *ngIf="!entry.billable"></i>
+              {{ entry.billable ? 'Abrechenbar' : 'Intern' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="entry-actions">
+          <button class="action-btn secondary" (click)="duplicateEntry(entry)" title="Duplizieren">
+            <i class="icon-copy"></i>
+          </button>
+          <button class="action-btn secondary" (click)="editEntry(entry)" title="Bearbeiten">
+            <i class="icon-edit"></i>
+          </button>
+          <button class="action-btn danger" (click)="deleteEntry(entry.id)" title="Löschen">
+            <i class="icon-delete"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredEntries.length === 0">
+      <div class="empty-icon">
+        <i class="icon-clock-large"></i>
+      </div>
+      <h3 class="empty-title">Keine Zeiteinträge gefunden</h3>
+      <p class="empty-description">
+        Starten Sie Ihren ersten Timer oder passen Sie die Filter an, um Einträge anzuzeigen.
+      </p>
+      <button class="btn-primary" (click)="startTimer()">
+        <i class="icon-play"></i>
+        Timer starten
+      </button>
+    </div>
+  </div>
+</div>

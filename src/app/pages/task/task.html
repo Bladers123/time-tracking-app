@@ -1,0 +1,338 @@
+<div class="aufgaben-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Aufgaben & Tasks</h1>
+      <p class="page-subtitle">Verwalten Sie Ihre Aufgaben und behalten Sie den Überblick über alle Projekte</p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="btn-primary" (click)="createTask()">
+        <i class="icon-plus"></i>
+        Neue Aufgabe
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-header">
+          <i class="icon-tasks"></i>
+          <span class="stat-label">Gesamt</span>
+        </div>
+        <div class="stat-value">{{ taskStats.total }}</div>
+        <div class="stat-detail">Alle Aufgaben</div>
+      </div>
+
+      <div class="stat-card todo">
+        <div class="stat-header">
+          <i class="icon-todo"></i>
+          <span class="stat-label">Zu erledigen</span>
+        </div>
+        <div class="stat-value">{{ taskStats.todo }}</div>
+        <div class="stat-detail">Offene Aufgaben</div>
+      </div>
+
+      <div class="stat-card progress">
+        <div class="stat-header">
+          <i class="icon-progress"></i>
+          <span class="stat-label">In Bearbeitung</span>
+        </div>
+        <div class="stat-value">{{ taskStats.inProgress }}</div>
+        <div class="stat-detail">Aktive Aufgaben</div>
+      </div>
+
+      <div class="stat-card overdue">
+        <div class="stat-header">
+          <i class="icon-warning"></i>
+          <span class="stat-label">Überfällig</span>
+        </div>
+        <div class="stat-value">{{ taskStats.overdue }}</div>
+        <div class="stat-detail">Verspätete Aufgaben</div>
+      </div>
+
+      <div class="stat-card due">
+        <div class="stat-header">
+          <i class="icon-calendar"></i>
+          <span class="stat-label">Heute fällig</span>
+        </div>
+        <div class="stat-value">{{ taskStats.dueToday }}</div>
+        <div class="stat-detail">Deadline heute</div>
+      </div>
+
+      <div class="stat-card done">
+        <div class="stat-header">
+          <i class="icon-check"></i>
+          <span class="stat-label">Erledigt</span>
+        </div>
+        <div class="stat-value">{{ taskStats.done }}</div>
+        <div class="stat-detail">Abgeschlossene Aufgaben</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and View Controls -->
+  <div class="controls-section">
+    <div class="controls-card">
+      <!-- Search -->
+      <div class="search-group">
+        <div class="search-input">
+          <i class="icon-search"></i>
+          <input type="text" 
+                 placeholder="Aufgaben durchsuchen..." 
+                 [(ngModel)]="searchQuery" 
+                 (input)="applyFilters()">
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-group">
+        <select class="filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="all">Alle Status</option>
+          <option *ngFor="let status of statusOptions" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="selectedProject" (change)="applyFilters()">
+          <option value="all">Alle Projekte</option>
+          <option *ngFor="let project of availableProjects" [value]="project.id">
+            {{ project.name }}
+          </option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="selectedPriority" (change)="applyFilters()">
+          <option value="all">Alle Prioritäten</option>
+          <option *ngFor="let priority of priorityOptions" [value]="priority.value">
+            {{ priority.label }}
+          </option>
+        </select>
+
+        <label class="filter-checkbox">
+          <input type="checkbox" [(ngModel)]="showOverdueOnly" (change)="applyFilters()">
+          <span class="checkbox-label">Nur überfällige</span>
+        </label>
+      </div>
+
+      <!-- View Controls -->
+      <div class="view-controls">
+        <div class="view-mode-buttons">
+          <button class="view-btn" 
+                  [class.active]="viewMode === 'list'" 
+                  (click)="setViewMode('list')"
+                  title="Listenansicht">
+            <i class="icon-list"></i>
+          </button>
+          <button class="view-btn" 
+                  [class.active]="viewMode === 'kanban'" 
+                  (click)="setViewMode('kanban')"
+                  title="Kanban Board">
+            <i class="icon-kanban"></i>
+          </button>
+        </div>
+
+        <div class="sort-controls">
+          <select class="sort-select" [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="dueDate">Nach Fälligkeitsdatum</option>
+            <option value="priority">Nach Priorität</option>
+            <option value="created">Nach Erstellungsdatum</option>
+            <option value="title">Nach Titel</option>
+          </select>
+          
+          <button class="sort-direction-btn" 
+                  (click)="setSortBy(sortBy)"
+                  [title]="sortDirection === 'asc' ? 'Aufsteigend' : 'Absteigend'">
+            <i class="icon-sort" [class.desc]="sortDirection === 'desc'"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks Content -->
+  <div class="tasks-section">
+    <!-- List View -->
+    <div class="tasks-list" *ngIf="viewMode === 'list'">
+      <div class="tasks-header">
+        <h2 class="tasks-title">Aufgaben</h2>
+        <div class="tasks-count">{{ filteredTasks.length }} von {{ taskStats.total }}</div>
+      </div>
+
+      <div class="task-items" *ngIf="filteredTasks.length > 0">
+        <div *ngFor="let task of filteredTasks; trackBy: trackByTaskId" 
+             class="task-card"
+             [class.overdue]="isOverdue(task)"
+             [class.due-today]="isDueToday(task)">
+          
+          <div class="task-header">
+            <div class="task-title-section">
+              <h3 class="task-title" (click)="editTask(task)">{{ task.title }}</h3>
+              <div class="task-meta">
+                <span class="task-project" (click)="navigateToProject(task.projectId)">
+                  {{ task.projectName }}
+                </span>
+                <span class="task-assignee" *ngIf="task.assignee">
+                  <i class="icon-user"></i>
+                  {{ task.assignee }}
+                </span>
+              </div>
+            </div>
+
+            <div class="task-status-section">
+              <div class="task-priority" [style.background-color]="getPriorityColor(task.priority)">
+                {{ getPriorityLabel(task.priority) }}
+              </div>
+              <div class="task-status" [style.background-color]="getStatusColor(task.status)">
+                {{ getStatusLabel(task.status) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="task-content" *ngIf="task.description">
+            <p class="task-description">{{ task.description }}</p>
+          </div>
+
+          <div class="task-tags" *ngIf="task.tags.length > 0">
+            <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
+          </div>
+
+          <div class="task-progress" *ngIf="task.subtasks.length > 0">
+            <div class="progress-header">
+              <span class="progress-label">Fortschritt</span>
+              <span class="progress-percentage">{{ getCompletionPercentage(task) }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getCompletionPercentage(task)"></div>
+            </div>
+            <div class="subtasks-list">
+              <div *ngFor="let subtask of task.subtasks; trackBy: trackBySubtaskId" 
+                   class="subtask-item">
+                <label class="subtask-checkbox">
+                  <input type="checkbox" 
+                         [checked]="subtask.completed"
+                         (change)="toggleSubtask(task.id, subtask.id)">
+                  <span class="subtask-title" [class.completed]="subtask.completed">
+                    {{ subtask.title }}
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-footer">
+            <div class="task-dates">
+              <div class="task-due" *ngIf="task.dueDate">
+                <i class="icon-calendar"></i>
+                <span [class.overdue]="isOverdue(task)" [class.due-today]="isDueToday(task)">
+                  {{ formatDate(task.dueDate) }}
+                </span>
+              </div>
+              <div class="task-hours" *ngIf="task.estimatedHours">
+                <i class="icon-clock"></i>
+                <span>{{ task.actualHours || 0 }}h / {{ task.estimatedHours }}h</span>
+              </div>
+            </div>
+
+            <div class="task-actions">
+              <button class="action-btn" (click)="startTimer(task)" title="Timer starten">
+                <i class="icon-play"></i>
+              </button>
+              <button class="action-btn" (click)="editTask(task)" title="Bearbeiten">
+                <i class="icon-edit"></i>
+              </button>
+              <button class="action-btn" (click)="duplicateTask(task)" title="Duplizieren">
+                <i class="icon-copy"></i>
+              </button>
+              <button class="action-btn danger" (click)="deleteTask(task.id)" title="Löschen">
+                <i class="icon-delete"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanban View -->
+    <div class="kanban-board" *ngIf="viewMode === 'kanban'">
+      <div class="kanban-columns">
+        <div *ngFor="let status of statusOptions" class="kanban-column">
+          <div class="column-header">
+            <h3 class="column-title" [style.color]="status.color">
+              {{ status.label }}
+            </h3>
+            <div class="column-count">
+              {{ getTasksByStatus(status.value).length }}
+            </div>
+          </div>
+
+          <div class="column-tasks">
+            <div *ngFor="let task of getTasksByStatus(status.value); trackBy: trackByTaskId"
+                 class="kanban-task"
+                 [class.overdue]="isOverdue(task)"
+                 [class.due-today]="isDueToday(task)">
+              <div class="kanban-task-header">
+                <h4 class="kanban-task-title" (click)="editTask(task)">{{ task.title }}</h4>
+                <div class="kanban-task-priority" [style.background-color]="getPriorityColor(task.priority)">
+                  {{ getPriorityLabel(task.priority) }}
+                </div>
+              </div>
+
+              <div class="kanban-task-content">
+                <div class="kanban-task-project" (click)="navigateToProject(task.projectId)">
+                  {{ task.projectName }}
+                </div>
+                
+                <div class="kanban-task-assignee" *ngIf="task.assignee">
+                  <i class="icon-user"></i>
+                  {{ task.assignee }}
+                </div>
+
+                <div class="kanban-task-due" *ngIf="task.dueDate">
+                  <i class="icon-calendar"></i>
+                  <span [class.overdue]="isOverdue(task)" [class.due-today]="isDueToday(task)">
+                    {{ formatDate(task.dueDate) }}
+                  </span>
+                </div>
+
+                <div class="kanban-task-progress" *ngIf="task.subtasks.length > 0">
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="getCompletionPercentage(task)"></div>
+                  </div>
+                  <span class="progress-text">{{ getCompletionPercentage(task) }}%</span>
+                </div>
+              </div>
+
+              <div class="kanban-task-actions">
+                <button class="action-btn small" (click)="startTimer(task)" title="Timer starten">
+                  <i class="icon-play"></i>
+                </button>
+                <button class="action-btn small" (click)="editTask(task)" title="Bearbeiten">
+                  <i class="icon-edit"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredTasks.length === 0">
+      <div class="empty-icon">
+        <i class="icon-tasks-large"></i>
+      </div>
+      <h3 class="empty-title">Keine Aufgaben gefunden</h3>
+      <p class="empty-description">
+        {{ searchQuery || selectedStatus !== 'all' || selectedProject !== 'all' ? 
+           'Keine Aufgaben entsprechen den aktuellen Filterkriterien.' : 
+           'Erstellen Sie Ihre erste Aufgabe, um loszulegen.' }}
+      </p>
+      <button class="btn-primary" (click)="createTask()">
+        <i class="icon-plus"></i>
+        Neue Aufgabe erstellen
+      </button>
+    </div>
+  </div>
+</div>

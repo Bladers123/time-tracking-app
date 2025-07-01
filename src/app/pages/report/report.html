@@ -1,0 +1,280 @@
+<div class="berichte-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Berichte & Analytics</h1>
+      <p class="page-subtitle">Detaillierte Auswertungen Ihrer Arbeitszeiten und Projektfortschritte</p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="btn-export" (click)="exportToPDF()">
+        <i class="icon-pdf"></i>
+        PDF
+      </button>
+      <button class="btn-export" (click)="exportToCSV()">
+        <i class="icon-csv"></i>
+        CSV
+      </button>
+      <button class="btn-export" (click)="exportToExcel()">
+        <i class="icon-excel"></i>
+        Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filters-section">
+    <div class="filters-card">
+      <div class="filter-group">
+        <label class="filter-label">Zeitraum:</label>
+        <select class="filter-select" [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+          <option value="week">Diese Woche</option>
+          <option value="month">Dieser Monat</option>
+          <option value="quarter">Dieses Quartal</option>
+          <option value="year">Dieses Jahr</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Projekt:</label>
+        <select class="filter-select" [(ngModel)]="selectedProject" (change)="onProjectChange()">
+          <option value="all">Alle Projekte</option>
+          <option *ngFor="let project of availableProjects" [value]="project.id">
+            {{ project.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-checkbox">
+          <input type="checkbox" [(ngModel)]="showBillableOnly" (change)="onBillableToggle()">
+          <span class="checkbox-label">Nur abrechenbare Zeiten</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Statistics -->
+  <div class="summary-section">
+    <div class="summary-grid">
+      <div class="summary-card primary">
+        <div class="summary-header">
+          <i class="icon-clock"></i>
+          <span class="summary-label">Gesamtstunden</span>
+        </div>
+        <div class="summary-value">{{ formatHours(reportData.totalHours) }}</div>
+        <div class="summary-detail">{{ reportData.period }}</div>
+      </div>
+
+      <div class="summary-card success">
+        <div class="summary-header">
+          <i class="icon-euro"></i>
+          <span class="summary-label">Abrechenbare Stunden</span>
+        </div>
+        <div class="summary-value">{{ formatHours(reportData.billableHours) }}</div>
+        <div class="summary-detail">{{ summaryStats.billablePercentage }}% der Gesamtzeit</div>
+      </div>
+
+      <div class="summary-card info">
+        <div class="summary-header">
+          <i class="icon-calendar"></i>
+          <span class="summary-label">Durchschnitt/Tag</span>
+        </div>
+        <div class="summary-value">{{ formatHours(summaryStats.averageHoursPerDay) }}</div>
+        <div class="summary-detail">{{ summaryStats.workingDays }} Arbeitstage</div>
+      </div>
+
+      <div class="summary-card warning">
+        <div class="summary-header">
+          <i class="icon-star"></i>
+          <span class="summary-label">Top Projekt</span>
+        </div>
+        <div class="summary-value">{{ summaryStats.topProject }}</div>
+        <div class="summary-detail">Meiste Stunden</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="charts-grid">
+      <!-- Project Distribution Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Projektverteilung</h3>
+          <div class="chart-subtitle">Stunden pro Projekt</div>
+        </div>
+        <div class="chart-content">
+          <div class="chart-placeholder">
+            <div class="chart-legend">
+              <div *ngFor="let project of reportData.projects; let i = index; trackBy: trackByProjectId" 
+                   class="legend-item">
+                <div class="legend-color" [style.background-color]="getProjectColor(i)"></div>
+                <div class="legend-label">
+                  <span class="legend-name">{{ project.name }}</span>
+                  <span class="legend-value">{{ formatHours(project.totalHours) }} ({{ project.percentage }}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Zeitverlauf</h3>
+          <div class="chart-subtitle">Letzte 7 Tage</div>
+        </div>
+        <div class="chart-content">
+          <div class="timeline-chart">
+            <div class="timeline-bars">
+              <div *ngFor="let day of reportData.dailyBreakdown.slice(-7); let i = index; trackBy: trackByDate" 
+                   class="timeline-bar">
+                <div class="bar-container">
+                  <div class="bar total" 
+                       [style.height.%]="(day.totalHours / 10) * 100"
+                       [title]="'Gesamt: ' + formatHours(day.totalHours)">
+                  </div>
+                  <div class="bar billable" 
+                       [style.height.%]="(day.billableHours / 10) * 100"
+                       [title]="'Abrechenbar: ' + formatHours(day.billableHours)">
+                  </div>
+                </div>
+                <div class="bar-label">
+                  {{ day.date.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit' }) }}
+                </div>
+              </div>
+            </div>
+            <div class="timeline-legend">
+              <div class="timeline-legend-item">
+                <div class="legend-color total"></div>
+                <span>Gesamtstunden</span>
+              </div>
+              <div class="timeline-legend-item">
+                <div class="legend-color billable"></div>
+                <span>Abrechenbare Stunden</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Project Reports -->
+  <div class="projects-section">
+    <div class="section-header">
+      <h2 class="section-title">Projekt-Details</h2>
+      <button class="btn-secondary" (click)="navigateToTimeEntries()">
+        <i class="icon-list"></i>
+        Alle Zeiteinträge
+      </button>
+    </div>
+
+    <div class="projects-table">
+      <div class="table-header">
+        <div class="table-cell">Projekt</div>
+        <div class="table-cell">Kunde</div>
+        <div class="table-cell">Gesamtstunden</div>
+        <div class="table-cell">Abrechenbar</div>
+        <div class="table-cell">Anteil</div>
+        <div class="table-cell">Aktionen</div>
+      </div>
+
+      <div *ngFor="let project of reportData.projects; trackBy: trackByProjectId" class="table-row">
+        <div class="table-cell">
+          <div class="project-info">
+            <div class="project-name" (click)="navigateToProject(project.id)">
+              {{ project.name }}
+            </div>
+          </div>
+        </div>
+        <div class="table-cell">
+          <div class="client-name">{{ project.client || 'Kein Kunde' }}</div>
+        </div>
+        <div class="table-cell">
+          <div class="hours-total">{{ formatHours(project.totalHours) }}</div>
+        </div>
+        <div class="table-cell">
+          <div class="hours-billable">{{ formatHours(project.billableHours) }}</div>
+        </div>
+        <div class="table-cell">
+          <div class="percentage">
+            <div class="percentage-bar">
+              <div class="percentage-fill" [style.width.%]="project.percentage"></div>
+            </div>
+            <span class="percentage-text">{{ project.percentage }}%</span>
+          </div>
+        </div>
+        <div class="table-cell">
+          <div class="table-actions">
+            <button class="action-btn" (click)="navigateToProject(project.id)" title="Details anzeigen">
+              <i class="icon-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Breakdown -->
+  <div class="daily-section" *ngIf="reportData.dailyBreakdown.length > 0">
+    <div class="section-header">
+      <h2 class="section-title">Tägliche Aufschlüsselung</h2>
+      <div class="section-subtitle">{{ reportData.period }}</div>
+    </div>
+
+    <div class="daily-grid">
+      <div *ngFor="let day of reportData.dailyBreakdown.slice(-14); trackBy: trackByDate" 
+           class="daily-card">
+        <div class="daily-header">
+          <div class="daily-date">
+            {{ day.date.toLocaleDateString('de-DE', { 
+              weekday: 'short', 
+              day: '2-digit', 
+              month: '2-digit' 
+            }) }}
+          </div>
+          <div class="daily-total">{{ formatHours(day.totalHours) }}</div>
+        </div>
+        
+        <div class="daily-content">
+          <div class="daily-projects">
+            <div *ngFor="let projectEntry of getProjectEntries(day.projects)" 
+                 class="project-entry">
+              <div class="project-dot" [style.background-color]="projectEntry.color"></div>
+              <div class="project-details">
+                <span class="project-name">{{ projectEntry.name }}</span>
+                <span class="project-hours">{{ formatHours(projectEntry.hours) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="daily-stats">
+            <div class="stat-item">
+              <i class="icon-euro"></i>
+              <span>{{ formatHours(day.billableHours) }} abrechenbar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="reportData.totalHours === 0">
+    <div class="empty-icon">
+      <i class="icon-chart-large"></i>
+    </div>
+    <h3 class="empty-title">Keine Daten verfügbar</h3>
+    <p class="empty-description">
+      Für den ausgewählten Zeitraum sind keine Zeiteinträge vorhanden.
+      Starten Sie mit der Zeiterfassung, um Berichte zu generieren.
+    </p>
+    <button class="btn-primary" (click)="navigateToTimeEntries()">
+      <i class="icon-clock"></i>
+      Zur Zeiterfassung
+    </button>
+  </div>
+</div>

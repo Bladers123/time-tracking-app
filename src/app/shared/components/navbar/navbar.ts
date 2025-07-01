@@ -1,7 +1,7 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 
 interface Project {
@@ -19,7 +19,7 @@ interface Project {
 }
 @Component({
   selector: 'app-navbar',
-  imports:[CommonModule],
+  imports:[CommonModule, RouterModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss']
 })
