@@ -34,6 +34,8 @@ interface Project {
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
+
+
 export class DashboardComponent implements OnInit {
   // User Information
   userName: string = 'Max Mustermann';
@@ -145,6 +147,11 @@ export class DashboardComponent implements OnInit {
 
   viewAllProjects(): void {
     this.router.navigate(['/projects']);
+  }
+
+  // Project Navigation
+  viewProject(project: Project): void {
+    this.router.navigate(['/project', project.id]);
   }
 
   // Activity Methods

@@ -93,7 +93,7 @@
       <button class="view-all-btn" (click)="viewAllProjects()">Alle Projekte</button>
     </div>
     <div class="projects-grid">
-      <div class="project-card" *ngFor="let project of topProjects; trackBy: trackByProjectId">
+      <div class="project-card" *ngFor="let project of topProjects; trackBy: trackByProjectId" (click)="viewProject(project)">
         <div class="project-header">
           <h3>{{ project.name }}</h3>
           <span class="project-status" [ngClass]="project.status">{{ project.status }}</span>

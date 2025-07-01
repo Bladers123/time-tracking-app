@@ -1,1 +1,196 @@
-<p>project works!</p>
+<app-navbar></app-navbar>
+
+<div class="project-container" *ngIf="!isLoading">
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error">
+    <div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <h2>{{ error }}</h2>
+      <button class="back-btn" (click)="goBack()">
+        <i class="icon icon-arrow-left"></i>
+        Zurück zum Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Project Content -->
+  <div class="project-content" *ngIf="project && !error">
+    <!-- Header -->
+    <div class="project-header">
+      <div class="header-top">
+        <button class="back-btn" (click)="goBack()">
+          <i class="icon icon-arrow-left"></i>
+          Zurück
+        </button>
+        <button class="add-session-btn" (click)="addNewSession()">
+          <i class="icon icon-plus"></i>
+          Neue Sitzung
+        </button>
+      </div>
+      
+      <div class="project-title">
+        <h1>{{ project.name }}</h1>
+        <span class="project-status" [style.background-color]="getStatusColor(project.status)">
+          {{ getStatusText(project.status) }}
+        </span>
+      </div>
+      
+      <p class="project-description" *ngIf="project.description">
+        {{ project.description }}
+      </p>
+    </div>
+
+    <!-- Project Details Cards -->
+    <div class="project-details">
+      <div class="detail-card">
+        <div class="detail-icon">👤</div>
+        <div class="detail-content">
+          <h3>Kunde</h3>
+          <p>{{ project.client || 'Nicht angegeben' }}</p>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-icon">📅</div>
+        <div class="detail-content">
+          <h3>Zeitraum</h3>
+          <p>{{ project.startDate | date:'dd.MM.yyyy' }} - {{ project.endDate | date:'dd.MM.yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-icon">💰</div>
+        <div class="detail-content">
+          <h3>Budget</h3>
+          <p>{{ project.budget }}h</p>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-icon">📊</div>
+        <div class="detail-content">
+          <h3>Fortschritt</h3>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="project.progressPercentage"></div>
+            </div>
+            <span class="progress-text">{{ project.progressPercentage }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="project-stats">
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-content">
+          <h3>Gesamtzeit</h3>
+          <p class="stat-value">{{ totalProjectHours }}h {{ totalProjectMinutes }}m</p>
+          <span class="stat-label">Erfasste Zeit</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-content">
+          <h3>Sitzungen</h3>
+          <p class="stat-value">{{ sessionsCount }}</p>
+          <span class="stat-label">Anzahl Einträge</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-content">
+          <h3>Durchschnitt</h3>
+          <p class="stat-value">{{ formatDuration(averageSessionDuration) }}</p>
+          <span class="stat-label">Pro Sitzung</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <h3>Diese Woche</h3>
+          <p class="stat-value">{{ project.weeklyHours }}h</p>
+          <span class="stat-label">Wochenstunden</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Entries Table -->
+    <div class="time-entries">
+      <div class="section-header">
+        <h2>Zeiteinträge</h2>
+        <div class="entries-count">{{ sessionsCount }} Einträge</div>
+      </div>
+
+      <div class="entries-table" *ngIf="projectSessions.length > 0; else noEntries">
+        <div class="table-header">
+          <div class="table-cell header-date">Datum</div>
+          <div class="table-cell header-task">Aufgabe</div>
+          <div class="table-cell header-start">Start</div>
+          <div class="table-cell header-end">Ende</div>
+          <div class="table-cell header-duration">Dauer</div>
+          <div class="table-cell header-actions">Aktionen</div>
+        </div>
+
+        <div class="table-row" *ngFor="let session of projectSessions; trackBy: trackBySessionId">
+          <div class="table-cell cell-date">
+            <i class="icon icon-calendar"></i>
+            <span>{{ session.date }}</span>
+          </div>
+
+          <div class="table-cell cell-task">
+            <span class="task-text">{{ session.taskDescription || 'Keine Beschreibung' }}</span>
+          </div>
+
+          <div class="table-cell cell-start">
+            <i class="icon icon-play"></i>
+            <span class="time-value">{{ formatTime(session.startTime) }}</span>
+          </div>
+
+          <div class="table-cell cell-end">
+            <i class="icon icon-stop"></i>
+            <span class="time-value">{{ formatTime(session.endTime) }}</span>
+          </div>
+
+          <div class="table-cell cell-duration">
+            <span class="duration-badge">{{ session.duration }}</span>
+          </div>
+
+          <div class="table-cell cell-actions">
+            <button class="action-btn edit-btn" (click)="editSession(session)" title="Bearbeiten">
+              <i class="icon icon-edit"></i>
+            </button>
+            <button class="action-btn delete-btn" (click)="deleteSession(session)" title="Löschen">
+              <i class="icon icon-delete"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noEntries>
+        <div class="no-entries">
+          <div class="no-entries-icon">📝</div>
+          <h3>Noch keine Zeiteinträge</h3>
+          <p>Starten Sie eine neue Sitzung, um Zeit für dieses Projekt zu erfassen.</p>
+          <button class="start-tracking-btn" (click)="addNewSession()">
+            <i class="icon icon-plus"></i>
+            Erste Sitzung starten
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Projekt wird geladen...</p>
+</div>
+
+<app-footer></app-footer>
+

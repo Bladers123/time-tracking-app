@@ -29,6 +29,8 @@ interface TodayStats {
   totalMinutes: number;
   sessionsCount: number;
 }
+
+
 @Component({
   selector: 'app-timer',
   standalone: true,
@@ -379,4 +381,3 @@ interface TodayStats {
     }
   }
 }
-
