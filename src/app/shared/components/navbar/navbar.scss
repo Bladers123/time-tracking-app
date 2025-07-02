@@ -407,6 +407,16 @@ $tablet: 1024px;
   content: '▼';
 }
 
+.icon-list::before         { content: '📋'; }
+.icon-check-square::before { content: '✅'; }
+.icon-file-text::before    { content: '📄'; }
+.icon-plus::before         { content: '➕'; }
+.icon-eye::before          { content: '👁️'; }
+.icon-play::before         { content: '▶️'; }
+.icon-building::before     { content: '🏢'; }
+.icon-euro::before         { content: '€'; }
+
+
 // Responsive Anpassungen
 @media (max-width: $mobile) {
   .navbar {
@@ -489,4 +499,6 @@ $tablet: 1024px;
       background-color: #f1f5f9;
     }
   }
+
+
 
