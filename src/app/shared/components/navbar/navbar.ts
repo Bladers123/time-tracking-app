@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 interface Project {
   id: string;
@@ -17,15 +18,19 @@ interface Project {
   startDate?: Date;
   endDate?: Date;
 }
+
+
 @Component({
   selector: 'app-navbar',
-  imports:[CommonModule, RouterModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './navbar.html',
-  styleUrls: ['./navbar.scss']
+  styleUrls: ['./navbar.scss'],
 })
 
 
 export class NavbarComponent implements OnInit, OnDestroy {
+
   // Menu States
   isMenuOpen = false;
   isUserMenuOpen = false;
@@ -40,12 +45,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   currentTime = new Date();
   isTimerRunning = false;
   currentSessionTime = '00:00:00';
-  
+
   // Configuration
   showLogo = true;
   showCurrentTime = true;
 
-  // Available Projects
+  // Available Projects - Diese werden an die project-modal Komponente weitergegeben
   availableProjects: Project[] = [
     {
       id: '1',
@@ -62,7 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     },
     {
       id: '2',
-      name: 'Mobile App',
+      name: 'Mobile App Development',
       status: 'active',
       weeklyHours: 8.0,
       totalHours: 32.0,
@@ -98,6 +103,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
       client: 'Legacy Systems Inc',
       startDate: new Date(2024, 7, 1),
       endDate: new Date(2024, 8, 30)
+    },
+    {
+      id: '5',
+      name: 'E-Commerce Platform',
+      status: 'active',
+      weeklyHours: 15.0,
+      totalHours: 67.5,
+      budget: 80,
+      progressPercentage: 84,
+      description: 'Entwicklung einer vollständigen E-Commerce-Plattform mit Payment-Integration.',
+      client: 'Retail Solutions Ltd',
+      startDate: new Date(2024, 9, 1),
+      endDate: new Date(2025, 1, 28)
     }
   ];
 
@@ -105,7 +123,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private timeSubscription?: Subscription;
   private timerSubscription?: Subscription;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.initializeUser();
@@ -121,7 +139,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // Initialisierung
   private initializeUser(): void {
     // Hier würden normalerweise Benutzerdaten aus einem Service geladen
-    // Beispiel für Initialen-Generierung
     const nameParts = this.userName.split(' ');
     this.userInitials = nameParts.map(part => part.charAt(0)).join('').toUpperCase();
   }
@@ -133,20 +150,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private loadTimerState(): void {
-    // Hier würde der Timer-Status aus einem Service geladen
-    // Beispiel für laufenden Timer
+    // Timer-Status aus localStorage laden
     const savedTimerState = localStorage.getItem('timerState');
     if (savedTimerState) {
-      const timerData = JSON.parse(savedTimerState);
-      this.isTimerRunning = timerData.isRunning;
-      if (this.isTimerRunning) {
-        this.startSessionTimer(timerData.startTime);
+      try {
+        const timerData = JSON.parse(savedTimerState);
+        this.isTimerRunning = timerData.isRunning;
+        if (this.isTimerRunning && timerData.startTime) {
+          this.startSessionTimer(timerData.startTime);
+        }
+      } catch (error) {
+        console.error('Fehler beim Laden des Timer-Status:', error);
+        localStorage.removeItem('timerState');
       }
     }
   }
 
   private startSessionTimer(startTime?: number): void {
     const start = startTime || Date.now();
+    this.timerSubscription?.unsubscribe(); // Vorherigen Timer stoppen
+
     this.timerSubscription = interval(1000).subscribe(() => {
       const elapsed = Date.now() - start;
       this.currentSessionTime = this.formatTime(elapsed);
@@ -187,7 +210,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isUserMenuOpen = false;
   }
 
-  // Projekt Modal Funktionen
+  // Projekt Modal Funktionen - Vereinfacht für externe Komponente
   toggleProjectModal(): void {
     this.isProjectModalOpen = !this.isProjectModalOpen;
     if (this.isProjectModalOpen) {
@@ -200,7 +223,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isProjectModalOpen = false;
   }
 
+  // Event Handler für project-modal Komponente
   selectProject(project: Project): void {
+    console.log('Projekt ausgewählt:', project.name);
     this.navigateToProject(project.id);
   }
 
@@ -210,13 +235,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   startTimer(project: Project): void {
-    // Hier würde der Timer für das spezifische Projekt gestartet
     console.log('Timer gestartet für Projekt:', project.name);
-    this.router.navigate(['/timer'], { queryParams: { projectId: project.id } });
+
+    // Timer-Status aktualisieren
+    this.isTimerRunning = true;
+    const startTime = Date.now();
+
+    // Status in localStorage speichern
+    localStorage.setItem('timerState', JSON.stringify({
+      isRunning: true,
+      startTime: startTime,
+      projectId: project.id,
+      projectName: project.name
+    }));
+
+    // Session Timer starten
+    this.startSessionTimer(startTime);
+
+    // Optional: Zur Timer-Seite navigieren
+    this.router.navigate(['/timer'], {
+      queryParams: {
+        projectId: project.id,
+        projectName: project.name
+      }
+    });
+
     this.closeProjectModal();
   }
 
   createNewProject(): void {
+    console.log('Neues Projekt erstellen');
     this.router.navigate(['/project/new']);
     this.closeProjectModal();
   }
@@ -243,12 +291,37 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Navigation
+  toggleTimer(): void {
+    if (this.isTimerRunning) {
+      this.stopTimer();
+    } else {
+      this.startTimerFromNavbar();
+    }
+  }
+
+  // Navigation und Benutzer-Aktionen
   logout(): void {
-    // Hier würde die Logout-Logik implementiert
+    console.log('Benutzer abmelden');
+
+    // Timer stoppen
     this.stopTimer();
+
+    // Alle gespeicherten Daten löschen
     localStorage.clear();
+    sessionStorage.clear();
+
+    // Zur Login-Seite navigieren
     this.router.navigate(['/login']);
+    this.closeUserMenu();
+  }
+
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+    this.closeUserMenu();
+  }
+
+  navigateToSettings(): void {
+    this.router.navigate(['/settings']);
     this.closeUserMenu();
   }
 
@@ -257,7 +330,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     switch (status) {
       case 'active': return '#10b981';
       case 'paused': return '#f59e0b';
-      case 'completed': return '#2563eb';
+      case 'completed': return '#3b82f6';
       default: return '#64748b';
     }
   }
@@ -279,26 +352,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;
-    
+
     // Schließe User Menu wenn außerhalb geklickt wird
     if (!target.closest('.user-dropdown')) {
       this.closeUserMenu();
     }
-    
+
     // Schließe Mobile Menu wenn außerhalb geklickt wird
     if (!target.closest('.navbar-nav') && !target.closest('.mobile-menu-toggle')) {
       this.closeMenu();
     }
 
-    // Schließe Project Modal wenn außerhalb geklickt wird
-    if (!target.closest('.project-modal') && !target.closest('[data-project-trigger]')) {
+    // Project Modal wird durch die externe Komponente selbst verwaltet
+    // Nur schließen wenn nicht auf den Trigger geklickt wurde
+    if (!target.closest('[data-project-trigger]') && !target.closest('app-project-modal')) {
       this.closeProjectModal();
     }
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
-    // Schließe Mobile Menu bei Größenänderung
+    // Schließe Mobile Menu bei Größenänderung auf Desktop
     if (window.innerWidth > 768) {
       this.closeMenu();
     }
@@ -306,10 +380,38 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   // @HostListener('document:keydown.escape', ['$event'])
   // onEscapeKey(event: KeyboardEvent): void {
+  //   // Alle Menüs und Modals schließen bei Escape
   //   this.closeMenu();
   //   this.closeUserMenu();
   //   this.closeProjectModal();
   // }
-}
 
+  // Zusätzliche Hilfsmethoden
+  getCurrentProjectName(): string {
+    const timerState = localStorage.getItem('timerState');
+    if (timerState) {
+      try {
+        const data = JSON.parse(timerState);
+        return data.projectName || 'Unbekanntes Projekt';
+      } catch {
+        return 'Unbekanntes Projekt';
+      }
+    }
+    return 'Kein Projekt';
+  }
+
+  hasActiveProjects(): boolean {
+    return this.availableProjects.some(project => project.status === 'active');
+  }
+
+  getActiveProjectsCount(): number {
+    return this.availableProjects.filter(project => project.status === 'active').length;
+  }
+
+  getTotalHoursThisWeek(): number {
+    return this.availableProjects
+      .filter(project => project.status === 'active')
+      .reduce((total, project) => total + project.weeklyHours, 0);
+  }
+}
 

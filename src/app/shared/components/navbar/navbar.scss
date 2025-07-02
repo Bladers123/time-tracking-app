@@ -1,43 +1,73 @@
-// Variablen
-$primary-color: #2563eb;
-$primary-hover: #1d4ed8;
+// Moderne Farbpalette
+$primary-color: #3b82f6;
+$primary-hover: #2563eb;
+$primary-light: #dbeafe;
 $secondary-color: #64748b;
-$background-color: #ffffff;
-$border-color: #e2e8f0;
-$text-color: #1e293b;
-$text-muted: #64748b;
+$accent-color: #8b5cf6;
+$accent-hover: #7c3aed;
+
+// Dark Theme Farben
+$dark-bg: #0f172a;
+$dark-surface: #1e293b;
+$dark-surface-hover: #334155;
+$dark-border: #475569;
+$dark-text: #f1f5f9;
+$dark-text-muted: #94a3b8;
+
+// Light Theme Farben
+$light-bg: #ffffff;
+$light-surface: #f8fafc;
+$light-surface-hover: #f1f5f9;
+$light-border: #e2e8f0;
+$light-text: #1e293b;
+$light-text-muted: #64748b;
+
+// Status Farben
 $success-color: #10b981;
+$success-light: #d1fae5;
+$warning-color: #f59e0b;
+$warning-light: #fef3c7;
 $danger-color: #ef4444;
+$danger-light: #fee2e2;
+
+// Schatten
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 $shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 // Breakpoints
 $mobile: 768px;
 $tablet: 1024px;
+$desktop: 1280px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-normal: 0.2s ease;
+$transition-slow: 0.3s ease;
 
 .navbar {
-  // background-color: $background-color;
-  
-    background-color: #0f172a !important;
-
-  border-bottom: 1px solid $border-color;
-  box-shadow: $shadow;
+  background: linear-gradient(135deg, $dark-bg 0%, $dark-surface 100%);
+  border-bottom: 1px solid $dark-border;
+  box-shadow: $shadow-lg;
   position: sticky;
   top: 0;
   z-index: 1000;
   height: 64px;
+  backdrop-filter: blur(10px);
 
   .navbar-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
     height: 100%;
 
     @media (max-width: $mobile) {
-      padding: 0 0.75rem;
+      padding: 0 1rem;
     }
   }
 
@@ -46,17 +76,28 @@ $tablet: 1024px;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-weight: 600;
-    font-size: 1.25rem;
-    color: $text-color;
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: $dark-text;
     text-decoration: none;
+    transition: $transition-normal;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
 
     .logo {
-      height: 32px;
+      height: 36px;
       width: auto;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
 
     .app-name {
+      background: linear-gradient(135deg, $primary-color, $accent-color);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+
       @media (max-width: $mobile) {
         display: none;
       }
@@ -67,21 +108,22 @@ $tablet: 1024px;
   .navbar-nav {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 
     @media (max-width: $mobile) {
       position: fixed;
       top: 64px;
       left: 0;
       right: 0;
-      background-color: $background-color;
-      border-bottom: 1px solid $border-color;
-      box-shadow: $shadow-lg;
+      background: linear-gradient(180deg, $dark-surface 0%, $dark-bg 100%);
+      border-bottom: 1px solid $dark-border;
+      box-shadow: $shadow-xl;
       flex-direction: column;
-      padding: 1rem;
-      gap: 0.5rem;
+      padding: 1.5rem;
+      gap: 0.75rem;
       transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      transition: transform $transition-slow;
+      backdrop-filter: blur(20px);
 
       &.active {
         transform: translateX(0);
@@ -93,32 +135,64 @@ $tablet: 1024px;
       cursor: pointer;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      color: $text-muted;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: $dark-text-muted;
       text-decoration: none;
       font-weight: 500;
-      transition: all 0.2s ease;
+      font-size: 0.875rem;
+      transition: all $transition-normal;
       white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, $primary-color, $accent-color);
+        opacity: 0;
+        transition: opacity $transition-normal;
+        z-index: -1;
+      }
 
       &:hover {
-        background-color: #f1f5f9;
-        color: $text-color;
+        color: $dark-text;
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+
+        &::before {
+          opacity: 0.1;
+        }
       }
 
       &.active {
-        background-color: $primary-color;
+        background: linear-gradient(135deg, $primary-color, $accent-color);
         color: white;
+        box-shadow: $shadow-md;
+
+        &::before {
+          opacity: 0;
+        }
       }
 
       i {
-        font-size: 1rem;
+        font-size: 1.125rem;
+        transition: transform $transition-normal;
+      }
+
+      &:hover i {
+        transform: scale(1.1);
       }
 
       @media (max-width: $mobile) {
         width: 100%;
         justify-content: flex-start;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
       }
     }
   }
@@ -130,13 +204,18 @@ $tablet: 1024px;
     gap: 1rem;
 
     @media (max-width: $mobile) {
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .current-time {
       font-weight: 600;
-      color: $text-color;
+      color: $dark-text;
       font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.375rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
 
       @media (max-width: $mobile) {
         display: none;
@@ -147,17 +226,21 @@ $tablet: 1024px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.375rem 0.75rem;
-      border-radius: 0.375rem;
-      background-color: #f8fafc;
-      border: 1px solid $border-color;
+      padding: 0.5rem 0.875rem;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 0.875rem;
-      color: $text-muted;
+      color: $dark-text-muted;
+      font-weight: 500;
+      transition: all $transition-normal;
+      backdrop-filter: blur(10px);
 
       &.running {
-        background-color: #dcfce7;
-        border-color: #bbf7d0;
-        color: #166534;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 
         .icon-timer {
           color: $success-color;
@@ -166,7 +249,8 @@ $tablet: 1024px;
       }
 
       .icon-timer {
-        font-size: 1rem;
+        font-size: 1.125rem;
+        transition: all $transition-normal;
 
         &.active {
           color: $success-color;
@@ -174,7 +258,7 @@ $tablet: 1024px;
       }
 
       @media (max-width: $mobile) {
-        padding: 0.25rem 0.5rem;
+        padding: 0.375rem 0.625rem;
         font-size: 0.75rem;
       }
     }
@@ -185,17 +269,20 @@ $tablet: 1024px;
       .user-button {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.375rem 0.75rem;
-        border: 1px solid $border-color;
-        border-radius: 0.5rem;
-        background-color: $background-color;
+        gap: 0.75rem;
+        padding: 0.5rem 0.875rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all $transition-normal;
+        backdrop-filter: blur(10px);
 
         &:hover {
-          background-color: #f8fafc;
-          border-color: #cbd5e1;
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          transform: translateY(-1px);
+          box-shadow: $shadow-md;
         }
 
         .user-avatar {
@@ -203,24 +290,27 @@ $tablet: 1024px;
           height: 32px;
           border-radius: 50%;
           object-fit: cover;
+          border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .user-initials {
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          background-color: $primary-color;
+          background: linear-gradient(135deg, $primary-color, $accent-color);
           color: white;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 600;
           font-size: 0.875rem;
+          box-shadow: $shadow-sm;
         }
 
         .user-name {
           font-weight: 500;
-          color: $text-color;
+          color: $dark-text;
+          font-size: 0.875rem;
 
           @media (max-width: $mobile) {
             display: none;
@@ -228,9 +318,9 @@ $tablet: 1024px;
         }
 
         .icon-chevron-down {
-          font-size: 0.875rem;
-          color: $text-muted;
-          transition: transform 0.2s ease;
+          font-size: 0.75rem;
+          color: $dark-text-muted;
+          transition: transform $transition-normal;
 
           &.rotated {
             transform: rotate(180deg);
@@ -240,51 +330,58 @@ $tablet: 1024px;
 
       .dropdown-menu {
         position: absolute;
-        top: calc(100% + 0.5rem);
+        top: calc(100% + 0.75rem);
         right: 0;
-        min-width: 200px;
-        background-color: $background-color;
-        border: 1px solid $border-color;
-        border-radius: 0.5rem;
-        box-shadow: $shadow-lg;
-        padding: 0.5rem 0;
+        min-width: 220px;
+        background: $dark-surface;
+        border: 1px solid $dark-border;
+        border-radius: 0.75rem;
+        box-shadow: $shadow-xl;
+        padding: 0.75rem 0;
         z-index: 1001;
+        backdrop-filter: blur(20px);
+        animation: slideDown 0.2s ease;
 
         .dropdown-item {
           display: flex;
           align-items: center;
           gap: 0.75rem;
           width: 100%;
-          padding: 0.75rem 1rem;
+          padding: 0.75rem 1.25rem;
           border: none;
           background: none;
-          color: $text-color;
+          color: $dark-text;
           text-decoration: none;
           font-size: 0.875rem;
+          font-weight: 500;
           cursor: pointer;
-          transition: background-color 0.2s ease;
+          transition: all $transition-fast;
 
           &:hover {
-            background-color: #f8fafc;
+            background: rgba(255, 255, 255, 0.05);
+            color: $primary-color;
+            transform: translateX(4px);
           }
 
           &.logout {
-            color: $danger-color;
+            color: #fca5a5;
 
             &:hover {
-              background-color: #fef2f2;
+              background: rgba(239, 68, 68, 0.1);
+              color: $danger-color;
             }
           }
 
           i {
             font-size: 1rem;
             width: 1rem;
+            opacity: 0.8;
           }
         }
 
         .dropdown-divider {
           height: 1px;
-          background-color: $border-color;
+          background: linear-gradient(90deg, transparent, $dark-border, transparent);
           margin: 0.5rem 0;
         }
       }
@@ -297,23 +394,33 @@ $tablet: 1024px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: none;
-    background: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
     cursor: pointer;
     padding: 0;
+    transition: all $transition-normal;
+    backdrop-filter: blur(10px);
 
     @media (max-width: $mobile) {
       display: flex;
     }
 
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
     .hamburger-line {
-      width: 20px;
+      width: 18px;
       height: 2px;
-      background-color: $text-color;
-      transition: all 0.3s ease;
+      background: $dark-text;
+      transition: all $transition-slow;
       margin: 2px 0;
+      border-radius: 1px;
 
       &:nth-child(1) {
         transform-origin: top left;
@@ -332,6 +439,7 @@ $tablet: 1024px;
 
         &:nth-child(2) {
           opacity: 0;
+          transform: scale(0);
         }
 
         &:nth-child(3) {
@@ -348,78 +456,70 @@ $tablet: 1024px;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 999;
-
-    // @media (min-width: $mobile + 1px) {
-    //   display: none;
-    // }
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
   }
 }
 
 // Animationen
 @keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
 
-  0%,
-  100% {
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
-
-  50% {
-    opacity: 0.5;
-  }
 }
 
-// Icon Klassen (falls keine Icon-Library verwendet wird)
-.icon-dashboard::before {
-  content: '📊';
-}
-
-.icon-clock::before {
-  content: '⏰';
-}
-
-.icon-folder::before {
-  content: '📁';
-}
-
-.icon-chart::before {
-  content: '📈';
-}
-
-.icon-timer::before {
-  content: '⏱️';
-}
-
-.icon-user::before {
-  content: '👤';
-}
-
-.icon-settings::before {
-  content: '⚙️';
-}
-
-.icon-logout::before {
-  content: '🚪';
-}
-
-.icon-chevron-down::before {
-  content: '▼';
-}
-
-.icon-list::before         { content: '📋'; }
+// Icon Klassen mit modernen Emojis
+.icon-dashboard::before { content: '📊'; }
+.icon-clock::before { content: '🕐'; }
+.icon-folder::before { content: '📂'; }
+.icon-chart::before { content: '📈'; }
+.icon-timer::before { content: '⏱️'; }
+.icon-user::before { content: '👤'; }
+.icon-settings::before { content: '⚙️'; }
+.icon-logout::before { content: '🚪'; }
+.icon-chevron-down::before { content: '▼'; }
+.icon-list::before { content: '📋'; }
 .icon-check-square::before { content: '✅'; }
-.icon-file-text::before    { content: '📄'; }
-.icon-plus::before         { content: '➕'; }
-.icon-eye::before          { content: '👁️'; }
-.icon-play::before         { content: '▶️'; }
-.icon-building::before     { content: '🏢'; }
-.icon-euro::before         { content: '€'; }
-
+.icon-file-text::before { content: '📄'; }
+.icon-plus::before { content: '➕'; }
+.icon-eye::before { content: '👁️'; }
+.icon-play::before { content: '▶️'; }
+.icon-building::before { content: '🏢'; }
+.icon-euro::before { content: '€'; }
+.icon-close::before { content: '✕'; }
 
 // Responsive Anpassungen
 @media (max-width: $mobile) {
   .navbar {
+    height: 56px;
+
     .navbar-container {
       height: 56px;
     }
@@ -430,75 +530,22 @@ $tablet: 1024px;
   }
 }
 
-
-  .navbar {
-    background-color: #1e293b;
-    border-bottom-color: #334155;
-
-    .navbar-brand {
-      color: #f1f5f9;
-    }
-
-    .navbar-nav .nav-link {
-      color: #94a3b8;
-
-      &:hover {
-        background-color: #334155;
-        color: #f1f5f9;
-      }
-    }
-
-    .navbar-user {
-      .current-time {
-        color: #f1f5f9;
-      }
-
-      .timer-status {
-        background-color: #334155;
-        border-color: #475569;
-        color: #94a3b8;
-
-        &.running {
-          background-color: #064e3b;
-          border-color: #065f46;
-          color: #6ee7b7;
-        }
-      }
-
-      .user-dropdown {
-        .user-button {
-          background-color: #334155;
-          border-color: #475569;
-          color: #f1f5f9;
-
-          &:hover {
-            background-color: #475569;
-          }
-        }
-
-        .dropdown-menu {
-          background-color: #1e293b;
-          border-color: #334155;
-
-          .dropdown-item {
-            color: #f1f5f9;
-
-            &:hover {
-              background-color: #334155;
-            }
-          }
-
-          .dropdown-divider {
-            background-color: #334155;
-          }
-        }
-      }
-    }
-
-    .mobile-menu-toggle .hamburger-line {
-      background-color: #f1f5f9;
-    }
+// Hover-Effekte für bessere Interaktivität
+.navbar-nav .nav-link,
+.navbar-user .user-button,
+.mobile-menu-toggle {
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
   }
+}
 
-
+// Accessibility Verbesserungen
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
