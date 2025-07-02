@@ -4,6 +4,7 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { ProjectModalComponent } from "../../../pages/project-modal/project-modal";
 
 interface Project {
   id: string;
@@ -23,7 +24,7 @@ interface Project {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ProjectModalComponent],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss'],
 })

@@ -1,1 +1,189 @@
-<p>project-modal works!</p>
+<div class="project-modal-overlay" *ngIf="isOpen" (click)="onOverlayClick()">
+    <div class="project-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="icon-folder"></i>
+                Projekte auswählen
+            </h3>
+            <button class="modal-close" (click)="closeModal()" aria-label="Schließen">
+                <i class="icon-close"></i>
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <!-- Suchfeld -->
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <i class="icon-search"></i>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Projekte durchsuchen..."
+                        [(ngModel)]="searchTerm"
+                        (input)="onSearchChange()"
+                    >
+                    <button 
+                        *ngIf="searchTerm" 
+                        class="clear-search" 
+                        (click)="clearSearch()"
+                        aria-label="Suche löschen"
+                    >
+                        <i class="icon-close"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-section">
+                <button 
+                    *ngFor="let filter of statusFilters" 
+                    class="filter-btn"
+                    [class.active]="activeFilter === filter.value"
+                    (click)="setFilter(filter.value)"
+                >
+                    <i [class]="filter.icon"></i>
+                    {{ filter.label }}
+                    <span class="filter-count">{{ getFilterCount(filter.value) }}</span>
+                </button>
+            </div>
+
+            <!-- Projekte Grid -->
+            <div class="projects-section">
+                <div class="projects-grid" *ngIf="filteredProjects.length > 0">
+                    <div 
+                        *ngFor="let project of filteredProjects; trackBy: trackByProjectId" 
+                        class="project-card"
+                        [class.active]="project.status === 'active'"
+                        [class.paused]="project.status === 'paused'" 
+                        [class.completed]="project.status === 'completed'"
+                        (click)="selectProject(project)"
+                    >
+                        <div class="project-header">
+                            <h4 class="project-name">{{ project.name }}</h4>
+                            <div 
+                                class="project-status" 
+                                [style.background-color]="getStatusColor(project.status)"
+                            >
+                                {{ getStatusText(project.status) }}
+                            </div>
+                        </div>
+
+                        <div class="project-details">
+                            <div class="project-client" *ngIf="project.client">
+                                <i class="icon-building"></i>
+                                {{ project.client }}
+                            </div>
+
+                            <div class="project-description" *ngIf="project.description">
+                                {{ project.description | slice:0:120 }}{{ project.description.length > 120 ? '...' : '' }}
+                            </div>
+
+                            <div class="project-progress">
+                                <div class="progress-bar">
+                                    <div 
+                                        class="progress-fill" 
+                                        [style.width.%]="project.progressPercentage"
+                                        [style.background-color]="getStatusColor(project.status)"
+                                    ></div>
+                                </div>
+                                <span class="progress-text">{{ project.progressPercentage }}% abgeschlossen</span>
+                            </div>
+
+                            <div class="project-stats">
+                                <div class="stat">
+                                    <i class="icon-clock"></i>
+                                    <span>{{ project.totalHours }}h gesamt</span>
+                                </div>
+                                <div class="stat" *ngIf="project.weeklyHours > 0">
+                                    <i class="icon-calendar"></i>
+                                    <span>{{ project.weeklyHours }}h diese Woche</span>
+                                </div>
+                                <div class="stat" *ngIf="project.budget">
+                                    <i class="icon-euro"></i>
+                                    <span>{{ project.budget }}h Budget</span>
+                                </div>
+                            </div>
+
+                            <div class="project-dates" *ngIf="project.startDate || project.endDate">
+                                <div class="date-info" *ngIf="project.startDate">
+                                    <i class="icon-calendar-start"></i>
+                                    <span>Start: {{ project.startDate | date:'dd.MM.yyyy' }}</span>
+                                </div>
+                                <div class="date-info" *ngIf="project.endDate">
+                                    <i class="icon-calendar-end"></i>
+                                    <span>Ende: {{ project.endDate | date:'dd.MM.yyyy' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-actions">
+                            <button 
+                                class="action-btn secondary"
+                                (click)="viewProjectDetails(project); $event.stopPropagation()"
+                                title="Projekt-Details anzeigen"
+                            >
+                                <i class="icon-eye"></i>
+                                Details
+                            </button>
+                            <button 
+                                class="action-btn primary"
+                                (click)="startProjectTimer(project); $event.stopPropagation()"
+                                [disabled]="project.status === 'completed'"
+                                title="Timer für dieses Projekt starten"
+                            >
+                                <i class="icon-play"></i>
+                                Timer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keine Projekte gefunden -->
+                <div class="no-projects" *ngIf="filteredProjects.length === 0">
+                    <div class="no-projects-icon">
+                        <i class="icon-folder-empty"></i>
+                    </div>
+                    <h4>Keine Projekte gefunden</h4>
+                    <p *ngIf="searchTerm">
+                        Keine Projekte entsprechen Ihrer Suche nach "{{ searchTerm }}".
+                    </p>
+                    <p *ngIf="!searchTerm && activeFilter !== 'all'">
+                        Keine Projekte mit dem Status "{{ getFilterLabel(activeFilter) }}" vorhanden.
+                    </p>
+                    <p *ngIf="!searchTerm && activeFilter === 'all'">
+                        Noch keine Projekte vorhanden. Erstellen Sie Ihr erstes Projekt!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="footer-stats">
+                <span class="stat-item">
+                    <i class="icon-folder"></i>
+                    {{ projects.length }} Projekte
+                </span>
+                <span class="stat-item">
+                    <i class="icon-clock"></i>
+                    {{ getTotalHours() }}h gesamt
+                </span>
+                <span class="stat-item">
+                    <i class="icon-calendar"></i>
+                    {{ getWeeklyHours() }}h diese Woche
+                </span>
+            </div>
+            
+            <div class="footer-actions">
+                <button class="btn-secondary" (click)="closeModal()">
+                    <i class="icon-close"></i>
+                    Schließen
+                </button>
+                <button class="btn-primary" (click)="createNewProject()">
+                    <i class="icon-plus"></i>
+                    Neues Projekt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

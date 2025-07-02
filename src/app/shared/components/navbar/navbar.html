@@ -86,14 +86,9 @@
     <div class="mobile-overlay" *ngIf="isMenuOpen" (click)="closeMenu()"></div>
 
     <!-- Project Modal Component Integration -->
-    <!-- <app-project-modal 
-        *ngIf="isProjectModalOpen"
-        [isOpen]="isProjectModalOpen"
-        [projects]="availableProjects"
-        (onClose)="closeProjectModal()"
-        (onProjectSelect)="selectProject($event)"
-        (onStartTimer)="startTimer($event)"
+    <app-project-modal *ngIf="isProjectModalOpen" [isOpen]="isProjectModalOpen" [projects]="availableProjects"
+        (onClose)="closeProjectModal()" (onProjectSelect)="selectProject($event)" (onStartTimer)="startTimer($event)"
         (onCreateNew)="createNewProject()">
-    </app-project-modal> -->
-</nav>
+    </app-project-modal>
 
+</nav>
