@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavbarComponent } from "../../shared/components/navbar/navbar";
-import { FooterComponent } from "../../shared/components/footer/footer";
 
 interface Project {
   id: string;
@@ -32,10 +30,13 @@ interface TimerSession {
 
 @Component({
   selector: 'app-project',
-  imports: [CommonModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './project.html',
   styleUrl: './project.scss'
 })
+
+
+
 export class ProjectComponent implements OnInit {
   project: Project | null = null;
   projectSessions: TimerSession[] = [];

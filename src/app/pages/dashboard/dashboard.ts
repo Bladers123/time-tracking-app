@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { TimerEntryComponent } from "./timer-entry/timer-entry";
+import { ProjectEntryComponent } from "./project-entry/project-entry";
 import { TimerComponent } from './timer/timer';
-import { NavbarComponent } from "../../shared/components/navbar/navbar";
-import { FooterComponent } from "../../shared/components/footer/footer";
 
 import {  OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -30,7 +28,7 @@ interface Project {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, NavbarComponent, FooterComponent, TimerComponent],
+  imports: [CommonModule, TimerComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })

@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FooterComponent } from '../../shared/components/footer/footer';
-import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FormsModule } from '@angular/forms';
 
 
@@ -48,7 +46,7 @@ interface TaskStats {
 
 @Component({
   selector: 'app-task',
-  imports: [CommonModule, FooterComponent, NavbarComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './task.html',
   styleUrl: './task.scss'
 })

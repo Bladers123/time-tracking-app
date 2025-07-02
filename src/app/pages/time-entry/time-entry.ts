@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
-import { FooterComponent } from '../../shared/components/footer/footer';
-import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FormsModule } from '@angular/forms';
 
 interface TimeEntry {
@@ -32,7 +30,7 @@ interface TimeStats {
 
 @Component({
   selector: 'app-time-entry',
-  imports: [CommonModule, FooterComponent, NavbarComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './time-entry.html',
   styleUrl: './time-entry.scss'
 })

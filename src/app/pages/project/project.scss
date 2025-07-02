@@ -1,3 +1,6 @@
+@use "sass:color";
+
+
 // Variables
 $primary-color: #2563eb;
 $primary-light: #3b82f6;
@@ -65,7 +68,6 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   padding: 24px;
   background: $background-color;
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 // Loading State
@@ -94,8 +96,13 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 // Error State
@@ -148,13 +155,17 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
         color: $text-primary;
       }
 
-      .icon.icon-arrow-left::before { content: '←'; }
+      .icon.icon-arrow-left::before {
+        content: '←';
+      }
     }
 
     .add-session-btn {
       @include button-style($success-color);
 
-      .icon.icon-plus::before { content: '+'; }
+      .icon.icon-plus::before {
+        content: '+';
+      }
     }
   }
 
@@ -395,7 +406,9 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
           font-weight: 600;
           color: $text-primary;
 
-          .icon.icon-calendar::before { content: '📅'; }
+          .icon.icon-calendar::before {
+            content: '📅';
+          }
         }
 
         &.cell-task {
@@ -412,11 +425,17 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
         &.cell-end {
           gap: 4px;
 
-          .icon.icon-play::before { content: '▶'; color: $success-color; }
-          .icon.icon-stop::before { content: '⏹'; color: $danger-color; }
+          .icon.icon-play::before {
+            content: '▶';
+            color: $success-color;
+          }
+
+          .icon.icon-stop::before {
+            content: '⏹';
+            color: $danger-color;
+          }
 
           .time-value {
-            font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             color: $text-primary;
             background: rgba($primary-color, 0.1);
@@ -427,7 +446,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 
         &.cell-duration {
           .duration-badge {
-            background: linear-gradient(135deg, $success-color, lighten($success-color, 10%));
+            background: linear-gradient(135deg, $success-color, color.adjust($success-color, $lightness: 10%));
             color: white;
             padding: 6px 12px;
             border-radius: 20px;
@@ -459,7 +478,9 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
                 color: white;
               }
 
-              .icon.icon-edit::before { content: '✏️'; }
+              .icon.icon-edit::before {
+                content: '✏️';
+              }
             }
 
             &.delete-btn {
@@ -471,7 +492,9 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
                 color: white;
               }
 
-              .icon.icon-delete::before { content: '🗑️'; }
+              .icon.icon-delete::before {
+                content: '🗑️';
+              }
             }
           }
         }
@@ -508,7 +531,9 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       font-size: 1.125rem;
       padding: 16px 32px;
 
-      .icon.icon-plus::before { content: '+'; }
+      .icon.icon-plus::before {
+        content: '+';
+      }
     }
   }
 }
@@ -516,6 +541,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 // Responsive Design
 @media (max-width: 1200px) {
   .entries-table {
+
     .table-header,
     .table-row {
       grid-template-columns: 100px 1fr 70px 70px 90px 90px;
@@ -562,6 +588,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   }
 
   .entries-table {
+
     .table-header,
     .table-row {
       grid-template-columns: 1fr;
@@ -611,4 +638,3 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     text-align: center;
   }
 }
-

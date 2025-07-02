@@ -6,15 +6,15 @@ import { Observable } from 'rxjs';
 
 
 @Component({
-  selector: 'app-timer-entry',
+  selector: 'app-project-entry',
   imports: [CommonModule],
-  templateUrl: './timer-entry.html',
-  styleUrl: './timer-entry.scss'
+  templateUrl: './project-entry.html',
+  styleUrl: './project-entry.scss'
 })
 
 
 
-export class TimerEntryComponent {
+export class ProjectEntryComponent {
  entries$: Observable<TimerEntry[]>;
 
   constructor(private timerService: TimerService) {

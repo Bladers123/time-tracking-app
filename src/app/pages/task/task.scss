@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Variables
 $primary-color: #2563eb;
 $primary-hover: #1d4ed8;
@@ -48,9 +50,8 @@ $border-radius-sm: 0.375rem;
 }
 
 // Main container
-.aufgaben-container {
+.task-container {
   min-height: 100vh;
-  background-color: $background-light;
   padding: 2rem 1rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -77,7 +78,6 @@ $border-radius-sm: 0.375rem;
     .page-title {
       font-size: 2.5rem;
       font-weight: 700;
-      color: $text-color;
       margin-bottom: 0.5rem;
 
       @media (max-width: 768px) {
@@ -142,12 +142,29 @@ $border-radius-sm: 0.375rem;
       background: var(--accent-color);
     }
 
-    &.total { --accent-color: #{$secondary-color}; }
-    &.todo { --accent-color: #{$secondary-color}; }
-    &.progress { --accent-color: #{$primary-color}; }
-    &.overdue { --accent-color: #{$danger-color}; }
-    &.due { --accent-color: #{$warning-color}; }
-    &.done { --accent-color: #{$success-color}; }
+    &.total {
+      --accent-color: #{$secondary-color};
+    }
+
+    &.todo {
+      --accent-color: #{$secondary-color};
+    }
+
+    &.progress {
+      --accent-color: #{$primary-color};
+    }
+
+    &.overdue {
+      --accent-color: #{$danger-color};
+    }
+
+    &.due {
+      --accent-color: #{$warning-color};
+    }
+
+    &.done {
+      --accent-color: #{$success-color};
+    }
 
     .stat-header {
       display: flex;
@@ -397,14 +414,12 @@ $border-radius-sm: 0.375rem;
     .tasks-title {
       font-size: 1.5rem;
       font-weight: 600;
-      color: $text-color;
       margin: 0;
     }
 
     .tasks-count {
       font-size: 0.875rem;
       color: $text-muted;
-      background-color: $background-light;
       padding: 0.25rem 0.75rem;
       border-radius: 1rem;
     }
@@ -573,7 +588,7 @@ $border-radius-sm: 0.375rem;
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, $primary-color, lighten($primary-color, 10%));
+          background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
           border-radius: 3px;
           transition: width 0.3s ease;
         }
@@ -860,7 +875,7 @@ $border-radius-sm: 0.375rem;
 
                 .progress-fill {
                   height: 100%;
-                  background: linear-gradient(90deg, $primary-color, lighten($primary-color, 10%));
+                  background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
                   border-radius: 2px;
                   transition: width 0.3s ease;
                 }
@@ -936,105 +951,74 @@ $border-radius-sm: 0.375rem;
 }
 
 // Icons
-.icon-plus::before { content: '➕'; }
-.icon-tasks::before { content: '📋'; }
-.icon-todo::before { content: '📝'; }
-.icon-progress::before { content: '⚡'; }
-.icon-warning::before { content: '⚠️'; }
-.icon-calendar::before { content: '📅'; }
-.icon-check::before { content: '✅'; }
-.icon-search::before { content: '🔍'; }
-.icon-list::before { content: '📋'; }
-.icon-kanban::before { content: '📊'; }
-.icon-sort::before { content: '↕️'; }
-.icon-user::before { content: '👤'; }
-.icon-play::before { content: '▶️'; }
-.icon-edit::before { content: '✏️'; }
-.icon-copy::before { content: '📋'; }
-.icon-delete::before { content: '🗑️'; }
-.icon-clock::before { content: '⏰'; }
-.icon-tasks-large::before { content: '📋'; }
-
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .aufgaben-container {
-    background-color: #0f172a;
-    color: #f1f5f9;
-  }
-
-  .stat-card,
-  .controls-card,
-  .task-card,
-  .kanban-column,
-  .kanban-task {
-    background-color: #1e293b;
-    border-color: #334155;
-  }
-
-  .page-title {
-    color: #f1f5f9;
-  }
-
-  .page-subtitle,
-  .stat-detail,
-  .tasks-count,
-  .task-description,
-  .task-assignee,
-  .task-due,
-  .task-hours {
-    color: #94a3b8;
-  }
-
-  .search-input input,
-  .filter-select,
-  .sort-select {
-    background-color: #1e293b;
-    border-color: #334155;
-    color: #f1f5f9;
-  }
-
-  .view-btn {
-    background-color: #1e293b;
-    border-color: #334155;
-
-    &:hover {
-      background-color: #334155;
-      color: #f1f5f9;
-    }
-  }
-
-  .sort-direction-btn,
-  .action-btn {
-    background-color: #1e293b;
-    border-color: #334155;
-
-    &:hover {
-      background-color: #334155;
-      color: #f1f5f9;
-    }
-  }
-
-  .tag {
-    background-color: #334155;
-    color: #94a3b8;
-  }
-
-  .column-count {
-    background-color: #334155;
-    color: #94a3b8;
-  }
-
-  .empty-state {
-    background-color: #1e293b;
-    border-color: #334155;
-  }
-
-  .empty-title {
-    color: #f1f5f9;
-  }
-
-  .empty-description {
-    color: #94a3b8;
-  }
+.icon-plus::before {
+  content: '➕';
 }
 
+.icon-tasks::before {
+  content: '📋';
+}
+
+.icon-todo::before {
+  content: '📝';
+}
+
+.icon-progress::before {
+  content: '⚡';
+}
+
+.icon-warning::before {
+  content: '⚠️';
+}
+
+.icon-calendar::before {
+  content: '📅';
+}
+
+.icon-check::before {
+  content: '✅';
+}
+
+.icon-search::before {
+  content: '🔍';
+}
+
+.icon-list::before {
+  content: '📋';
+}
+
+.icon-kanban::before {
+  content: '📊';
+}
+
+.icon-sort::before {
+  content: '↕️';
+}
+
+.icon-user::before {
+  content: '👤';
+}
+
+.icon-play::before {
+  content: '▶️';
+}
+
+.icon-edit::before {
+  content: '✏️';
+}
+
+.icon-copy::before {
+  content: '📋';
+}
+
+.icon-delete::before {
+  content: '🗑️';
+}
+
+.icon-clock::before {
+  content: '⏰';
+}
+
+.icon-tasks-large::before {
+  content: '📋';
+}

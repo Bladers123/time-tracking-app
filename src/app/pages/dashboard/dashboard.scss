@@ -1,3 +1,6 @@
+@use "sass:color";
+
+
 // Variables
 $primary-color: #2563eb;
 $primary-light: #3b82f6;
@@ -62,9 +65,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
-  background: $background-color;
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 // Header Section
@@ -104,8 +105,10 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     .icon {
       width: 20px;
       height: 20px;
-      
-      &.icon-plus::before { content: '+'; }
+
+      &.icon-plus::before {
+        content: '+';
+      }
     }
   }
 }
@@ -135,23 +138,35 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       font-size: 24px;
 
       &.today {
-        background: linear-gradient(135deg, $success-color, lighten($success-color, 10%));
-        &::before { content: '📅'; }
+        background: linear-gradient(135deg, $success-color, color.adjust($success-color, $lightness: 10%));
+
+        &::before {
+          content: '📅';
+        }
       }
 
       &.week {
         background: linear-gradient(135deg, $primary-color, $primary-light);
-        &::before { content: '📊'; }
+
+        &::before {
+          content: '📊';
+        }
       }
 
       &.month {
-        background: linear-gradient(135deg, $warning-color, lighten($warning-color, 10%));
-        &::before { content: '📈'; }
+        background: linear-gradient(135deg, $warning-color, color.adjust($warning-color, $lightness: 10%));
+
+        &::before {
+          content: '📈';
+        }
       }
 
       &.projects {
         background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-        &::before { content: '📁'; }
+
+        &::before {
+          content: '📁';
+        }
       }
     }
 
@@ -194,7 +209,6 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
-    color: $text-primary;
   }
 
   .view-all-btn {
@@ -205,7 +219,6 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 
     &:hover {
       background: $primary-color;
-      color: white;
     }
   }
 }
@@ -292,8 +305,13 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
           }
 
           .icon {
-            &.icon-edit::before { content: '✏️'; }
-            &.icon-delete::before { content: '🗑️'; }
+            &.icon-edit::before {
+              content: '✏️';
+            }
+
+            &.icon-delete::before {
+              content: '🗑️';
+            }
           }
         }
       }
@@ -515,4 +533,3 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     }
   }
 }
-

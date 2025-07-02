@@ -3,7 +3,7 @@ $primary-color: #2563eb;
 $primary-hover: #1d4ed8;
 $secondary-color: #64748b;
 $background-color: #f8fafc;
-$footer-bg: #1e293b;
+$footer-bg: #0f172a;
 $footer-text: #94a3b8;
 $footer-text-light: #cbd5e1;
 $border-color: #334155;
@@ -20,7 +20,7 @@ $mobile: 768px;
 $tablet: 1024px;
 
 .footer {
-  background-color: $footer-bg;
+  background-color: $footer-bg !important;
   color: $footer-text;
   margin-top: auto;
   border-top: 1px solid $border-color;
@@ -170,7 +170,6 @@ $tablet: 1024px;
         .stat-value {
           font-weight: 600;
           color: $footer-text-light;
-          font-family: 'Courier New', monospace;
 
           &.active {
             color: $success-color;
@@ -423,104 +422,3 @@ $tablet: 1024px;
 .icon-folder::before { content: '📁'; }
 .icon-timer::before { content: '⏱️'; }
 .icon-arrow-up::before { content: '⬆️'; }
-
-// Dark Mode Anpassungen
-@media (prefers-color-scheme: dark) {
-  .footer {
-    background-color: #0f172a;
-    border-top-color: #1e293b;
-
-    .footer-section .footer-title {
-      color: #e2e8f0;
-    }
-
-    .company-info {
-      .footer-logo .company-name {
-        color: #e2e8f0;
-      }
-
-      .company-description {
-        color: #94a3b8;
-      }
-    }
-
-    .session-stats .stats-grid .stat-item {
-      background-color: rgba(255, 255, 255, 0.03);
-
-      .stat-value {
-        color: #e2e8f0;
-      }
-    }
-
-    .footer-bottom {
-      border-top-color: #1e293b;
-    }
-
-    .mobile-stats {
-      background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    .mobile-copyright {
-      border-top-color: #1e293b;
-    }
-  }
-}
-
-// Utility Klassen
-.text-center {
-  text-align: center;
-}
-
-.text-small {
-  font-size: 0.75rem;
-}
-
-.mb-0 {
-  margin-bottom: 0;
-}
-
-.mt-1 {
-  margin-top: 0.25rem;
-}
-
-// Print Styles
-@media print {
-  .footer {
-    background-color: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-    border-top: 1px solid #ccc !important;
-
-    .footer-main {
-      display: none;
-    }
-
-    .footer-bottom {
-      display: flex !important;
-      justify-content: center;
-      padding: 1rem 0;
-
-      .footer-bottom-right {
-        display: none;
-      }
-
-      .footer-bottom-left {
-        text-align: center;
-
-        .copyright {
-          color: black !important;
-        }
-
-        .legal-links {
-          display: none;
-        }
-      }
-    }
-
-    .footer-mobile,
-    .scroll-to-top {
-      display: none !important;
-    }
-  }
-}
-

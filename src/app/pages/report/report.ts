@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FooterComponent } from '../../shared/components/footer/footer';
-import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FormsModule } from '@angular/forms';
 
 
@@ -43,7 +41,7 @@ interface ChartData {
 
 @Component({
   selector: 'app-report',
-  imports: [CommonModule, FooterComponent, NavbarComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './report.html',
   styleUrl: './report.scss'
 })
